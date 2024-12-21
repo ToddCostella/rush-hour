@@ -1,4 +1,5 @@
 from enum import Enum
+from icecream import ic
 
 
 class Direction(Enum):
@@ -23,7 +24,7 @@ class Board:
     def move_right(self, current_pos: int) -> int:
         return current_pos + 1
 
-    def is_valid_move(self, current_pos: int, direction: int) -> bool:
+    def is_valid_move(self, current_pos: int, direction: Direction) -> bool:
         match direction:
             case Direction.UP:
                 new_pos = self.move_up(current_pos)
@@ -33,12 +34,16 @@ class Board:
                 return new_pos < (self.SIZE * self.SIZE)
             case Direction.LEFT:
                 new_pos = self.move_left(current_pos)
-                return new_pos < 0 or new_pos % self.SIZE == 0
+                return new_pos < 0 or current_pos % self.SIZE == 0
             case Direction.RIGHT:
                 new_pos = self.move_right(current_pos)
-                return new_pos < (self.SIZE * self.SIZE) or new_pos % self.SIZE == 0
-            case _:
-                return False
+                ic(new_pos)
+                ic(current_pos)
+                ic(current_pos % self.SIZE)
+                left = new_pos < (self.SIZE * self.SIZE)
+                right = new_pos % self.SIZE == 0
+                ic(left, right)
+                return left and right
 
 
 class Game:
