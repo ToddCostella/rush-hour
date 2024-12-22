@@ -2,14 +2,6 @@
 from app.main import Board, Direction
 
 
-def test_valid_move_from_position_nine():
-    b = Board()
-    assert b.move_up(9) == 3
-    assert b.move_down(9) == 15
-    assert b.move_left(9) == 8
-    assert b.move_right(9) == 10
-
-
 def test_invalid_move_from_position_one():
     b = Board()
     assert b.is_valid_move(1, Direction.UP) == False
@@ -22,6 +14,18 @@ def test_invalid_move_from_position_six():
     assert b.is_valid_move(6, Direction.RIGHT) == False
 
 
+def test_invalid_move_from_position_thirty_one():
+    b = Board()
+    assert b.is_valid_move(31, Direction.DOWN) == False
+    assert b.is_valid_move(31, Direction.LEFT) == False
+
+
+def test_invalid_move_from_position_thirty_six():
+    b = Board()
+    assert b.is_valid_move(36, Direction.DOWN) == False
+    assert b.is_valid_move(36, Direction.RIGHT) == False
+
+
 def test_invalid_move_from_position_twelve():
     b = Board()
     assert b.is_valid_move(12, Direction.UP) == True
@@ -31,3 +35,43 @@ def test_invalid_move_from_position_twelve():
 def test_valid_move_from_position_five():
     b = Board()
     assert b.is_valid_move(5, Direction.RIGHT) == True
+
+
+def test_all_directions_from_position_nine():
+    b = Board()
+    assert b.move_up(9) == 3
+    assert b.move_down(9) == 15
+    assert b.move_left(9) == 8
+    assert b.move_right(9) == 10
+
+
+def test_move_all_directions_from_position_one():
+    b = Board()
+    assert b.move_up(1) == 0
+    assert b.move_down(1) == 7
+    assert b.move_left(1) == 0
+    assert b.move_right(1) == 2
+
+
+def test_move_all_directions_from_position_six():
+    b = Board()
+    assert b.move_up(6) == 0
+    assert b.move_down(6) == 12
+    assert b.move_left(6) == 5
+    assert b.move_right(6) == 0
+
+
+def test_move_all_directions_from_position_thirty_one():
+    b = Board()
+    assert b.move_up(31) == 25
+    assert b.move_down(31) == 0
+    assert b.move_left(31) == 0
+    assert b.move_right(31) == 32
+
+
+def test_move_all_directions_from_position_thirty_six():
+    b = Board()
+    assert b.move_up(36) == 30
+    assert b.move_down(36) == 0
+    assert b.move_left(36) == 35
+    assert b.move_right(36) == 0
