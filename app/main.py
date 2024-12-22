@@ -1,5 +1,6 @@
 from enum import Enum
 from icecream import ic
+from dataclasses import dataclass
 
 
 class Direction(Enum):
@@ -7,6 +8,35 @@ class Direction(Enum):
     DOWN = 2
     LEFT = 3
     RIGHT = 4
+
+
+class Colour(Enum):
+    BLUE = 1
+    GREEN = 2
+    RED = 3
+    PURPLE = 4
+    BROWN = 5
+    WHITE = 6
+    ORANGE = 7
+    YELLOW = 8
+
+
+class Orientation(Enum):
+    HORIZONTAL = 1
+    VERTICAL = 2
+
+
+@dataclass
+class Car:
+    colour: Colour
+    length: int
+
+
+@dataclass
+class Position:
+    car: Car
+    orientation: Orientation
+    board_position: int
 
 
 class Board:
@@ -54,5 +84,52 @@ class Board:
                 return has_not_overflowed_column and has_not_overflowed_row
 
 
+# TODO: Move this out to some sort of config file or something
 class Game:
+    initial_setup = [
+        Position(
+            car=Car(colour=Colour.GREEN, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=1,
+        ),
+        Position(
+            Car(colour=Colour.PURPLE, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=7,
+        ),
+        Position(
+            Car(colour=Colour.RED, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=14,
+        ),
+        Position(
+            Car(colour=Colour.ORANGE, length=2),
+            orientation=Orientation.VERTICAL,
+            board_position=25,
+        ),
+        Position(
+            Car(colour=Colour.GREEN, length=3),
+            orientation=Orientation.HORIZONTAL,
+            board_position=33,
+        ),
+        Position(
+            Car(colour=Colour.BLUE, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=10,
+        ),
+        Position(
+            Car(colour=Colour.BLUE, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=29,
+        ),
+        Position(
+            Car(colour=Colour.YELLOW, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=6,
+        ),
+    ]
     moves: list[int]
+
+
+g = Game()
+ic(g.initial_setup)
