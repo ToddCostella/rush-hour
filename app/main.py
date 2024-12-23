@@ -28,6 +28,7 @@ class Orientation(Enum):
 
 @dataclass
 class Car:
+    identifier: str
     colour: Colour
     length: int
 
@@ -83,47 +84,61 @@ class Board:
                 has_not_overflowed_column = current_pos % self.SIZE != 0
                 return has_not_overflowed_column and has_not_overflowed_row
 
+    # Returns a list of board positions given a car and it's initial position
+    def calculate_position_coverage(self, position: Position) -> list[int]:
+        positions = []
+        if position.orientation == Orientation.HORIZONTAL:
+            positions = list(
+                range(
+                    position.board_position,
+                    position.board_position + position.car.length,
+                )
+            )
+        if position.orientation == Orientation.VERTICAL:
+            raise Exception("Not Implemented")
+        return positions
+
 
 # TODO: Move this out to some sort of config file or something
 class Game:
     initial_setup = [
         Position(
-            car=Car(colour=Colour.GREEN, length=2),
+            car=Car(identifier="A", colour=Colour.GREEN, length=2),
             orientation=Orientation.HORIZONTAL,
             board_position=1,
         ),
         Position(
-            Car(colour=Colour.PURPLE, length=3),
+            Car(identifier="B", colour=Colour.PURPLE, length=3),
             orientation=Orientation.VERTICAL,
             board_position=7,
         ),
         Position(
-            Car(colour=Colour.RED, length=2),
+            Car(identifier="C", colour=Colour.RED, length=2),
             orientation=Orientation.HORIZONTAL,
             board_position=14,
         ),
         Position(
-            Car(colour=Colour.ORANGE, length=2),
+            Car(identifier="D", colour=Colour.ORANGE, length=2),
             orientation=Orientation.VERTICAL,
             board_position=25,
         ),
         Position(
-            Car(colour=Colour.GREEN, length=3),
+            Car(identifier="E", colour=Colour.GREEN, length=3),
             orientation=Orientation.HORIZONTAL,
             board_position=33,
         ),
         Position(
-            Car(colour=Colour.BLUE, length=3),
+            Car(identifier="F", colour=Colour.BLUE, length=3),
             orientation=Orientation.VERTICAL,
             board_position=10,
         ),
         Position(
-            Car(colour=Colour.BLUE, length=2),
+            Car(identifier="G", colour=Colour.BLUE, length=2),
             orientation=Orientation.HORIZONTAL,
             board_position=29,
         ),
         Position(
-            Car(colour=Colour.YELLOW, length=3),
+            Car(identifier="H", colour=Colour.YELLOW, length=3),
             orientation=Orientation.VERTICAL,
             board_position=6,
         ),
@@ -131,5 +146,6 @@ class Game:
     moves: list[int]
 
 
-g = Game()
-ic(g.initial_setup)
+if __name__ == "__main__":
+    g = Game()
+    ic(g.initial_setup)

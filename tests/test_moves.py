@@ -1,5 +1,5 @@
 # import pytest
-from app.main import Board, Direction
+from app.main import Board, Direction, Car, Position, Colour, Orientation
 
 
 def test_invalid_move_from_position_one():
@@ -75,3 +75,33 @@ def test_move_all_directions_from_position_thirty_six():
     assert b.move_down(36) == 0
     assert b.move_left(36) == 35
     assert b.move_right(36) == 0
+
+
+def test_car_length_two_horizontal_position_1():
+    b = Board()
+    position = Position(
+        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+        orientation=Orientation.HORIZONTAL,
+        board_position=1,
+    )
+    assert [1, 2] == b.calculate_position_coverage(position=position)
+
+
+def test_car_length_two_horizontal_position_31():
+    b = Board()
+    position = Position(
+        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+        orientation=Orientation.HORIZONTAL,
+        board_position=31,
+    )
+    assert [31, 32] == b.calculate_position_coverage(position=position)
+
+
+def test_car_length_two_vertical_position_1():
+    b = Board()
+    position = Position(
+        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+        orientation=Orientation.VERTICAL,
+        board_position=1,
+    )
+    assert [1, 7] == b.calculate_position_coverage(position=position)
