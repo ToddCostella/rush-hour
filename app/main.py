@@ -95,7 +95,10 @@ class Board:
                 )
             )
         if position.orientation == Orientation.VERTICAL:
-            raise Exception("Not Implemented")
+            for vertical_position in range(0, position.car.length):
+                positions.append(
+                    position.board_position + (vertical_position * self.SIZE)
+                )
         return positions
 
 
