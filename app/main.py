@@ -31,15 +31,8 @@ class Car:
     identifier: str
     colour: Colour
     length: int
-    orientation: Orientation 
-    positions:list[int]
-
-
-@dataclass
-class Position:
-    car: Car
     orientation: Orientation
-    board_position: int
+    positions: list[int]
 
 
 class Board:
@@ -87,33 +80,30 @@ class Board:
                 return has_not_overflowed_column and has_not_overflowed_row
 
     # Returns a list of board positions given a car and it's initial position
-    def calculate_position_coverage(self, position: Position) -> list[int]:
+    def calculate_position_coverage(self, car: Car) -> list[int]:
         positions = []
-        if position.orientation == Orientation.HORIZONTAL:
+        board_position = car.positions[0]
+        if car.orientation == Orientation.HORIZONTAL:
             positions = list(
                 range(
-                    position.board_position,
-                    position.board_position + position.car.length,
+                    board_position,
+                    board_position + car.length,
                 )
             )
-        if position.orientation == Orientation.VERTICAL:
-            for vertical_position in range(0, position.car.length):
-                positions.append(
-                    position.board_position + (vertical_position * self.SIZE)
-                )
+        if car.orientation == Orientation.VERTICAL:
+            for vertical_position in range(0, car.length):
+                positions.append(board_position + (vertical_position * self.SIZE))
         return positions
 
 
 class Game:
-    def __init__(self, positions) -> None:
+    def __init__(self, cars) -> None:
         self.board = Board()
-        self.positions = positions
+        self.cars = cars
 
     def get_car_by_id(self, id: str) -> Car | None:
-        matches = [
-            position for position in self.positions if position.car.identifier == id
-        ]
-        return matches[0].car if len(matches) > 0 and matches[0] is not None else None
+        matches = [car for car in self.cars if car.identifier == id]
+        return matches[0] if len(matches) > 0 and matches[0] is not None else None
 
     moves: list[int]
 

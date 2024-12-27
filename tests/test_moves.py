@@ -1,67 +1,88 @@
 # import pytest
-from app.main import Board, Direction, Car, Position, Colour, Orientation, Game
+from app.main import Board, Direction, Car, Colour, Orientation, Game
 
 
 def card_1_game() -> Game:
+    # TODO need to populate positions with actual list of valid positions
     positions = [
-        Position(
-            car=Car(identifier="A", colour=Colour.GREEN, length=2),
+        Car(
+            identifier="A",
+            colour=Colour.GREEN,
+            length=2,
             orientation=Orientation.HORIZONTAL,
-            board_position=1,
+            positions=[1],
         ),
-        Position(
-            Car(identifier="B", colour=Colour.PURPLE, length=3),
+        Car(
+            identifier="B",
+            colour=Colour.PURPLE,
+            length=3,
             orientation=Orientation.VERTICAL,
-            board_position=7,
+            positions=[7],
         ),
-        Position(
-            Car(identifier="C", colour=Colour.RED, length=2),
+        Car(
+            identifier="C",
+            colour=Colour.RED,
+            length=2,
             orientation=Orientation.HORIZONTAL,
-            board_position=14,
+            positions=[14],
         ),
-        Position(
-            Car(identifier="D", colour=Colour.ORANGE, length=2),
+        Car(
+            identifier="D",
+            colour=Colour.ORANGE,
+            length=2,
             orientation=Orientation.VERTICAL,
-            board_position=25,
+            positions=[25],
         ),
-        Position(
-            Car(identifier="E", colour=Colour.GREEN, length=3),
+        Car(
+            identifier="E",
+            colour=Colour.GREEN,
+            length=3,
             orientation=Orientation.HORIZONTAL,
-            board_position=33,
+            positions=[33],
         ),
-        Position(
-            Car(identifier="F", colour=Colour.BLUE, length=3),
+        Car(
+            identifier="F",
+            colour=Colour.BLUE,
+            length=3,
             orientation=Orientation.VERTICAL,
-            board_position=10,
+            positions=[10],
         ),
-        Position(
-            Car(identifier="G", colour=Colour.BLUE, length=2),
+        Car(
+            identifier="G",
+            colour=Colour.BLUE,
+            length=2,
             orientation=Orientation.HORIZONTAL,
-            board_position=29,
+            positions=[29],
         ),
-        Position(
-            Car(identifier="H", colour=Colour.YELLOW, length=3),
+        Car(
+            identifier="H",
+            colour=Colour.YELLOW,
+            length=3,
             orientation=Orientation.VERTICAL,
-            board_position=6,
+            positions=[6],
         ),
     ]
-    return Game(positions=positions)
+    return Game(cars=positions)
 
 
 def simple_two_car_game() -> Game:
     positions = [
-        Position(
-            Car(identifier="X", colour=Colour.RED, length=2),
+        Car(
+            identifier="X",
+            colour=Colour.RED,
+            length=2,
             orientation=Orientation.HORIZONTAL,
-            board_position=14,
+            positions=[14],
         ),
-        Position(
-            Car(identifier="A", colour=Colour.BLUE, length=3),
+        Car(
+            identifier="A",
+            colour=Colour.BLUE,
+            length=3,
             orientation=Orientation.VERTICAL,
-            board_position=6,
+            positions=[6],
         ),
     ]
-    return Game(positions=positions)
+    return Game(cars=positions)
 
 
 def test_valid_move_from_position_five():
@@ -141,80 +162,94 @@ def test_invalid_move_from_position_twelve():
 
 def test_car_length_two_horizontal_position_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=2,
         orientation=Orientation.HORIZONTAL,
-        board_position=1,
+        positions=[1],
     )
-    assert [1, 2] == b.calculate_position_coverage(position=position)
+    assert [1, 2] == b.calculate_position_coverage(car=car)
 
 
 def test_car_length_three_horizontal_position_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=3),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=3,
         orientation=Orientation.HORIZONTAL,
-        board_position=1,
+        positions=[1],
     )
-    assert [1, 2, 3] == b.calculate_position_coverage(position=position)
+    assert [1, 2, 3] == b.calculate_position_coverage(car=car)
 
 
 def test_car_length_two_horizontal_position_31():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=2,
         orientation=Orientation.HORIZONTAL,
-        board_position=31,
+        positions=[31],
     )
-    assert [31, 32] == b.calculate_position_coverage(position=position)
+    assert [31, 32] == b.calculate_position_coverage(car=car)
 
 
 def test_car_length_two_vertical_position_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=2,
         orientation=Orientation.VERTICAL,
-        board_position=1,
+        positions=[1],
     )
-    assert [1, 7] == b.calculate_position_coverage(position=position)
+    assert [1, 7] == b.calculate_position_coverage(car=car)
 
 
 def test_car_length_three_vertical_position_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=3),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=3,
         orientation=Orientation.VERTICAL,
-        board_position=1,
+        positions=[1],
     )
-    assert [1, 7, 13] == b.calculate_position_coverage(position=position)
+    assert [1, 7, 13] == b.calculate_position_coverage(car=car)
 
 
 def test_car_length_two_vertical_position_6():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=2,
         orientation=Orientation.VERTICAL,
-        board_position=6,
+        positions=[6],
     )
-    assert [6, 12] == b.calculate_position_coverage(position=position)
+    assert [6, 12] == b.calculate_position_coverage(car=car)
 
 
 def test_car_length_three_vertical_position_6():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=3),
+    car = Car(
+        identifier="A",
+        colour=Colour.GREEN,
+        length=3,
         orientation=Orientation.VERTICAL,
-        board_position=6,
+        positions=[6],
     )
-    assert [6, 12, 18] == b.calculate_position_coverage(position=position)
+    assert [6, 12, 18] == b.calculate_position_coverage(car=car)
 
 
 def test_simple_game_initial_setup():
     g = simple_two_car_game()
     assert g
     assert g.board
-    assert g.positions
-    assert len(g.positions) == 2
+    assert g.cars
+    assert len(g.cars) == 2
 
 
 def test_find_car_x():
