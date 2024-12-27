@@ -215,3 +215,21 @@ def test_simple_game_initial_setup():
     assert g.board
     assert g.positions
     assert len(g.positions) == 2
+
+
+def test_find_car_x():
+    g = simple_two_car_game()
+    car_x = g.get_car_by_id("X")
+    assert car_x
+    assert car_x.colour == Colour.RED
+
+
+def test_find_car_z_should_fail():
+    g = simple_two_car_game()
+    _ = g.get_car_by_id("Z")
+    assert _ is None
+
+
+def test_simple_game_other_car_coverage():
+    g = simple_two_car_game()
+    board = g.board
