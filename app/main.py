@@ -32,7 +32,7 @@ class Car:
     colour: Colour
     length: int
     orientation: Orientation 
-    head_position:int
+    positions:list[int]
 
 
 @dataclass
