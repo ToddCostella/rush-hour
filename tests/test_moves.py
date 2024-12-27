@@ -1,5 +1,67 @@
 # import pytest
-from app.main import Board, Direction, Car, Position, Colour, Orientation
+from app.main import Board, Direction, Car, Position, Colour, Orientation, Game
+
+
+def card_1_game() -> Game:
+    positions = [
+        Position(
+            car=Car(identifier="A", colour=Colour.GREEN, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=1,
+        ),
+        Position(
+            Car(identifier="B", colour=Colour.PURPLE, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=7,
+        ),
+        Position(
+            Car(identifier="C", colour=Colour.RED, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=14,
+        ),
+        Position(
+            Car(identifier="D", colour=Colour.ORANGE, length=2),
+            orientation=Orientation.VERTICAL,
+            board_position=25,
+        ),
+        Position(
+            Car(identifier="E", colour=Colour.GREEN, length=3),
+            orientation=Orientation.HORIZONTAL,
+            board_position=33,
+        ),
+        Position(
+            Car(identifier="F", colour=Colour.BLUE, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=10,
+        ),
+        Position(
+            Car(identifier="G", colour=Colour.BLUE, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=29,
+        ),
+        Position(
+            Car(identifier="H", colour=Colour.YELLOW, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=6,
+        ),
+    ]
+    return Game(positions=positions)
+
+
+def simple_two_car_game() -> Game:
+    positions = [
+        Position(
+            Car(identifier="X", colour=Colour.RED, length=2),
+            orientation=Orientation.HORIZONTAL,
+            board_position=14,
+        ),
+        Position(
+            Car(identifier="A", colour=Colour.BLUE, length=3),
+            orientation=Orientation.VERTICAL,
+            board_position=6,
+        ),
+    ]
+    return Game(positions=positions)
 
 
 def test_valid_move_from_position_five():
@@ -145,3 +207,11 @@ def test_car_length_three_vertical_position_6():
         board_position=6,
     )
     assert [6, 12, 18] == b.calculate_position_coverage(position=position)
+
+
+def test_simple_game_initial_setup():
+    g = simple_two_car_game()
+    assert g
+    assert g.board
+    assert g.positions
+    assert len(g.positions) == 2

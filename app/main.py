@@ -102,53 +102,13 @@ class Board:
         return positions
 
 
-# TODO: Move this out to some sort of config file or something
 class Game:
-    initial_setup = [
-        Position(
-            car=Car(identifier="A", colour=Colour.GREEN, length=2),
-            orientation=Orientation.HORIZONTAL,
-            board_position=1,
-        ),
-        Position(
-            Car(identifier="B", colour=Colour.PURPLE, length=3),
-            orientation=Orientation.VERTICAL,
-            board_position=7,
-        ),
-        Position(
-            Car(identifier="C", colour=Colour.RED, length=2),
-            orientation=Orientation.HORIZONTAL,
-            board_position=14,
-        ),
-        Position(
-            Car(identifier="D", colour=Colour.ORANGE, length=2),
-            orientation=Orientation.VERTICAL,
-            board_position=25,
-        ),
-        Position(
-            Car(identifier="E", colour=Colour.GREEN, length=3),
-            orientation=Orientation.HORIZONTAL,
-            board_position=33,
-        ),
-        Position(
-            Car(identifier="F", colour=Colour.BLUE, length=3),
-            orientation=Orientation.VERTICAL,
-            board_position=10,
-        ),
-        Position(
-            Car(identifier="G", colour=Colour.BLUE, length=2),
-            orientation=Orientation.HORIZONTAL,
-            board_position=29,
-        ),
-        Position(
-            Car(identifier="H", colour=Colour.YELLOW, length=3),
-            orientation=Orientation.VERTICAL,
-            board_position=6,
-        ),
-    ]
+    def __init__(self, positions) -> None:
+        self.board = Board()
+        self.positions = positions
+
     moves: list[int]
 
 
-if __name__ == "__main__":
-    g = Game()
-    ic(g.initial_setup)
+# if __name__ == "__main__":
+#    g = Game()
