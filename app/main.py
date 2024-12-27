@@ -109,6 +109,12 @@ class Game:
         self.board = Board()
         self.positions = positions
 
+    def get_car_by_id(self, id: str) -> Car | None:
+        matches = [
+            position for position in self.positions if position.car.identifier == id
+        ]
+        return matches[0].car if len(matches) > 0 and matches[0] is not None else None
+
     moves: list[int]
 
 
