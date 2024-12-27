@@ -31,6 +31,8 @@ class Car:
     identifier: str
     colour: Colour
     length: int
+    orientation: Orientation 
+    head_position:int
 
 
 @dataclass
