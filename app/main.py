@@ -1,6 +1,7 @@
 from enum import Enum
 from icecream import ic
 from dataclasses import dataclass
+from typing import NewType
 
 
 class Direction(Enum):
@@ -26,9 +27,12 @@ class Orientation(Enum):
     VERTICAL = 2
 
 
+VehicleID = NewType("VehicleID", str)
+
+
 @dataclass
 class Car:
-    identifier: str
+    identifier: VehicleID
     color: Color
     length: int
 
@@ -84,7 +88,7 @@ class Board:
                 has_not_overflowed_column = current_pos % self.SIZE != 0
                 return has_not_overflowed_column and has_not_overflowed_row
 
-    # Returns a list of board positions given a car and it's initial position
+    # Returns a list of board placements given a car and it's initial placement
     def calculate_vehicle_placement_coverage(
         self, vehicle_placement: VehiclePlacement
     ) -> list[int]:
@@ -97,9 +101,9 @@ class Board:
                 )
             )
         if vehicle_placement.orientation == Orientation.VERTICAL:
-            for vertical_position in range(0, vehicle_placement.car.length):
+            for vertical_placement in range(0, vehicle_placement.car.length):
                 placements.append(
-                    vehicle_placement.start_square + (vertical_position * self.SIZE)
+                    vehicle_placement.start_square + (vertical_placement * self.SIZE)
                 )
         return placements
 
