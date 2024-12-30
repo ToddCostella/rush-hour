@@ -1,75 +1,74 @@
-# import pytest
-from app.main import Board, Direction, Car, Position, Colour, Orientation, Game
+from app.main import Board, Direction, Car, VehiclePlacement, Color, Orientation, Game
 
 
 def card_1_game() -> Game:
-    positions = [
-        Position(
-            car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    placements = [
+        VehiclePlacement(
+            car=Car(identifier="A", color=Color.GREEN, length=2),
             orientation=Orientation.HORIZONTAL,
-            board_position=1,
+            start_square=1,
         ),
-        Position(
-            Car(identifier="B", colour=Colour.PURPLE, length=3),
+        VehiclePlacement(
+            Car(identifier="B", color=Color.PURPLE, length=3),
             orientation=Orientation.VERTICAL,
-            board_position=7,
+            start_square=7,
         ),
-        Position(
-            Car(identifier="C", colour=Colour.RED, length=2),
+        VehiclePlacement(
+            Car(identifier="C", color=Color.RED, length=2),
             orientation=Orientation.HORIZONTAL,
-            board_position=14,
+            start_square=14,
         ),
-        Position(
-            Car(identifier="D", colour=Colour.ORANGE, length=2),
+        VehiclePlacement(
+            Car(identifier="D", color=Color.ORANGE, length=2),
             orientation=Orientation.VERTICAL,
-            board_position=25,
+            start_square=25,
         ),
-        Position(
-            Car(identifier="E", colour=Colour.GREEN, length=3),
+        VehiclePlacement(
+            Car(identifier="E", color=Color.GREEN, length=3),
             orientation=Orientation.HORIZONTAL,
-            board_position=33,
+            start_square=33,
         ),
-        Position(
-            Car(identifier="F", colour=Colour.BLUE, length=3),
+        VehiclePlacement(
+            Car(identifier="F", color=Color.BLUE, length=3),
             orientation=Orientation.VERTICAL,
-            board_position=10,
+            start_square=10,
         ),
-        Position(
-            Car(identifier="G", colour=Colour.BLUE, length=2),
+        VehiclePlacement(
+            Car(identifier="G", color=Color.BLUE, length=2),
             orientation=Orientation.HORIZONTAL,
-            board_position=29,
+            start_square=29,
         ),
-        Position(
-            Car(identifier="H", colour=Colour.YELLOW, length=3),
+        VehiclePlacement(
+            Car(identifier="H", color=Color.YELLOW, length=3),
             orientation=Orientation.VERTICAL,
-            board_position=6,
+            start_square=6,
         ),
     ]
-    return Game(positions=positions)
+    return Game(vehicle_placements=placements)
 
 
 def simple_two_car_game() -> Game:
-    positions = [
-        Position(
-            Car(identifier="X", colour=Colour.RED, length=2),
+    placement = [
+        VehiclePlacement(
+            Car(identifier="X", color=Color.RED, length=2),
             orientation=Orientation.HORIZONTAL,
-            board_position=14,
+            start_square=14,
         ),
-        Position(
-            Car(identifier="A", colour=Colour.BLUE, length=3),
+        VehiclePlacement(
+            Car(identifier="A", color=Color.BLUE, length=3),
             orientation=Orientation.VERTICAL,
-            board_position=6,
+            start_square=6,
         ),
     ]
-    return Game(positions=positions)
+    return Game(vehicle_placements=placement)
 
 
-def test_valid_move_from_position_five():
+def test_valid_move_from_square_five():
     b = Board()
     assert b.is_valid_move(5, Direction.RIGHT) == True
 
 
-def test_all_directions_from_position_nine():
+def test_all_directions_from_square_nine():
     b = Board()
     assert b.move_up(9) == 3
     assert b.move_down(9) == 15
@@ -77,7 +76,7 @@ def test_all_directions_from_position_nine():
     assert b.move_right(9) == 10
 
 
-def test_move_all_directions_from_position_one():
+def test_move_all_directions_from_square_one():
     b = Board()
     assert b.move_up(1) == 0
     assert b.move_down(1) == 7
@@ -85,7 +84,7 @@ def test_move_all_directions_from_position_one():
     assert b.move_right(1) == 2
 
 
-def test_move_all_directions_from_position_six():
+def test_move_all_directions_from_square_six():
     b = Board()
     assert b.move_up(6) == 0
     assert b.move_down(6) == 12
@@ -93,7 +92,7 @@ def test_move_all_directions_from_position_six():
     assert b.move_right(6) == 0
 
 
-def test_move_all_directions_from_position_thirty_one():
+def test_move_all_directions_from_square_thirty_one():
     b = Board()
     assert b.move_up(31) == 25
     assert b.move_down(31) == 0
@@ -101,7 +100,7 @@ def test_move_all_directions_from_position_thirty_one():
     assert b.move_right(31) == 32
 
 
-def test_move_all_directions_from_position_thirty_six():
+def test_move_all_directions_from_square_thirty_six():
     b = Board()
     assert b.move_up(36) == 30
     assert b.move_down(36) == 0
@@ -109,109 +108,119 @@ def test_move_all_directions_from_position_thirty_six():
     assert b.move_right(36) == 0
 
 
-def test_invalid_move_from_position_one():
+def test_invalid_move_from_square_one():
     b = Board()
     assert b.is_valid_move(1, Direction.UP) == False
     assert b.is_valid_move(1, Direction.LEFT) == False
 
 
-def test_invalid_move_from_position_six():
+def test_invalid_move_from_square_six():
     b = Board()
     assert b.is_valid_move(6, Direction.UP) == False
     assert b.is_valid_move(6, Direction.RIGHT) == False
 
 
-def test_invalid_move_from_position_thirty_one():
+def test_invalid_move_from_square_thirty_one():
     b = Board()
     assert b.is_valid_move(31, Direction.DOWN) == False
     assert b.is_valid_move(31, Direction.LEFT) == False
 
 
-def test_invalid_move_from_position_thirty_six():
+def test_invalid_move_from_square_thirty_six():
     b = Board()
     assert b.is_valid_move(36, Direction.DOWN) == False
     assert b.is_valid_move(36, Direction.RIGHT) == False
 
 
-def test_invalid_move_from_position_twelve():
+def test_invalid_move_from_square_twelve():
     b = Board()
     assert b.is_valid_move(12, Direction.UP) == True
     assert b.is_valid_move(12, Direction.RIGHT) == False
 
 
-def test_car_length_two_horizontal_position_1():
+def test_car_length_two_horizontal_square_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=2),
         orientation=Orientation.HORIZONTAL,
-        board_position=1,
+        start_square=1,
     )
-    assert [1, 2] == b.calculate_position_coverage(position=position)
+    assert [1, 2] == b.calculate_vehicle_placement_coverage(vehicle_placement=placement)
 
 
-def test_car_length_three_horizontal_position_1():
+def test_car_length_three_horizontal_square_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=3),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=3),
         orientation=Orientation.HORIZONTAL,
-        board_position=1,
+        start_square=1,
     )
-    assert [1, 2, 3] == b.calculate_position_coverage(position=position)
+    assert [1, 2, 3] == b.calculate_vehicle_placement_coverage(
+        vehicle_placement=placement
+    )
 
 
-def test_car_length_two_horizontal_position_31():
+def test_car_length_two_horizontal_square_31():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=2),
         orientation=Orientation.HORIZONTAL,
-        board_position=31,
+        start_square=31,
     )
-    assert [31, 32] == b.calculate_position_coverage(position=position)
+    assert [31, 32] == b.calculate_vehicle_placement_coverage(
+        vehicle_placement=placement
+    )
 
 
-def test_car_length_two_vertical_position_1():
+def test_car_length_two_vertical_square_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=2),
         orientation=Orientation.VERTICAL,
-        board_position=1,
+        start_square=1,
     )
-    assert [1, 7] == b.calculate_position_coverage(position=position)
+    assert [1, 7] == b.calculate_vehicle_placement_coverage(vehicle_placement=placement)
 
 
-def test_car_length_three_vertical_position_1():
+def test_car_length_three_vertical_square_1():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=3),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=3),
         orientation=Orientation.VERTICAL,
-        board_position=1,
+        start_square=1,
     )
-    assert [1, 7, 13] == b.calculate_position_coverage(position=position)
+    assert [1, 7, 13] == b.calculate_vehicle_placement_coverage(
+        vehicle_placement=placement
+    )
 
 
-def test_car_length_two_vertical_position_6():
+def test_car_length_two_vertical_square_6():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=2),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=2),
         orientation=Orientation.VERTICAL,
-        board_position=6,
+        start_square=6,
     )
-    assert [6, 12] == b.calculate_position_coverage(position=position)
+    assert [6, 12] == b.calculate_vehicle_placement_coverage(
+        vehicle_placement=placement
+    )
 
 
-def test_car_length_three_vertical_position_6():
+def test_car_length_three_vertical_square_6():
     b = Board()
-    position = Position(
-        car=Car(identifier="A", colour=Colour.GREEN, length=3),
+    placement = VehiclePlacement(
+        car=Car(identifier="A", color=Color.GREEN, length=3),
         orientation=Orientation.VERTICAL,
-        board_position=6,
+        start_square=6,
     )
-    assert [6, 12, 18] == b.calculate_position_coverage(position=position)
+    assert [6, 12, 18] == b.calculate_vehicle_placement_coverage(
+        vehicle_placement=placement
+    )
 
 
 def test_simple_game_initial_setup():
     g = simple_two_car_game()
     assert g
     assert g.board
-    assert g.positions
-    assert len(g.positions) == 2
+    assert g.vehicle_placements
+    assert len(g.vehicle_placements) == 2

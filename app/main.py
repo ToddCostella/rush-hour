@@ -10,7 +10,7 @@ class Direction(Enum):
     RIGHT = 4
 
 
-class Colour(Enum):
+class Color(Enum):
     BLUE = 1
     GREEN = 2
     RED = 3
@@ -29,15 +29,15 @@ class Orientation(Enum):
 @dataclass
 class Car:
     identifier: str
-    colour: Colour
+    color: Color
     length: int
 
 
 @dataclass
-class Position:
+class VehiclePlacement:
     car: Car
     orientation: Orientation
-    board_position: int
+    start_square: int
 
 
 class Board:
@@ -85,27 +85,29 @@ class Board:
                 return has_not_overflowed_column and has_not_overflowed_row
 
     # Returns a list of board positions given a car and it's initial position
-    def calculate_position_coverage(self, position: Position) -> list[int]:
-        positions = []
-        if position.orientation == Orientation.HORIZONTAL:
-            positions = list(
+    def calculate_vehicle_placement_coverage(
+        self, vehicle_placement: VehiclePlacement
+    ) -> list[int]:
+        placements = []
+        if vehicle_placement.orientation == Orientation.HORIZONTAL:
+            placements = list(
                 range(
-                    position.board_position,
-                    position.board_position + position.car.length,
+                    vehicle_placement.start_square,
+                    vehicle_placement.start_square + vehicle_placement.car.length,
                 )
             )
-        if position.orientation == Orientation.VERTICAL:
-            for vertical_position in range(0, position.car.length):
-                positions.append(
-                    position.board_position + (vertical_position * self.SIZE)
+        if vehicle_placement.orientation == Orientation.VERTICAL:
+            for vertical_position in range(0, vehicle_placement.car.length):
+                placements.append(
+                    vehicle_placement.start_square + (vertical_position * self.SIZE)
                 )
-        return positions
+        return placements
 
 
 class Game:
-    def __init__(self, positions) -> None:
+    def __init__(self, vehicle_placements) -> None:
         self.board = Board()
-        self.positions = positions
+        self.vehicle_placements = vehicle_placements
 
     moves: list[int]
 
