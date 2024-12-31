@@ -89,12 +89,12 @@ class Board:
                 return has_not_overflowed_column and has_not_overflowed_row
 
     # Returns a list of board placements given a car and it's initial placement
-    def calculate_vehicle_placement_coverage(
+    def calculate_vehicle_placement_squares(
         self, vehicle_placement: VehiclePlacement
     ) -> list[int]:
-        placements = []
+        squares = []
         if vehicle_placement.orientation == Orientation.HORIZONTAL:
-            placements = list(
+            squares = list(
                 range(
                     vehicle_placement.start_square,
                     vehicle_placement.start_square + vehicle_placement.car.length,
@@ -102,10 +102,10 @@ class Board:
             )
         if vehicle_placement.orientation == Orientation.VERTICAL:
             for vertical_placement in range(0, vehicle_placement.car.length):
-                placements.append(
+                squares.append(
                     vehicle_placement.start_square + (vertical_placement * self.SIZE)
                 )
-        return placements
+        return squares
 
 
 class Game:
@@ -117,11 +117,40 @@ class Game:
         coverage = []
         for p in self.vehicle_placements:
             coverage.append(
-                self.board.calculate_vehicle_placement_coverage(vehicle_placement=p)
+                self.board.calculate_vehicle_placement_squares(vehicle_placement=p)
             )
-
         flattened_list = [item for sublist in coverage for item in sublist]
         return flattened_list
+
+    def calculate_vehicle_placement_coverage_for_others(
+        self, id: VehicleID
+    ) -> list[int]:
+        coverage = []
+        for p in self.vehicle_placements:
+            if p.car.identifier != id:
+                coverage.append(
+                    self.board.calculate_vehicle_placement_squares(vehicle_placement=p)
+                )
+        flattened_list = sorted([item for sublist in coverage for item in sublist])
+        return flattened_list
+
+    def get_vehicle_placement_by_identifier(
+        self, id: VehicleID
+    ) -> VehiclePlacement | None:
+        match = [
+            placement
+            for placement in self.vehicle_placements
+            if placement.car.identifier == id
+        ]
+        return match[0] if len(match) == 1 else None
+
+    def get_my_squares_from_board(self, id: VehicleID) -> list[int]:
+        placement = self.get_vehicle_placement_by_identifier(id)
+        my_squares = []
+        if placement is not None:
+            my_squares = self.board.calculate_vehicle_placement_squares(placement)
+
+        return my_squares
 
     moves: list[int]
 

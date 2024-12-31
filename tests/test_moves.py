@@ -1,3 +1,4 @@
+from icecream import ic
 from app.main import (
     Board,
     Direction,
@@ -175,7 +176,7 @@ def test_car_length_two_horizontal_square_1():
         orientation=Orientation.HORIZONTAL,
         start_square=1,
     )
-    assert [1, 2] == b.calculate_vehicle_placement_coverage(vehicle_placement=placement)
+    assert [1, 2] == b.calculate_vehicle_placement_squares(vehicle_placement=placement)
 
 
 def test_car_length_three_horizontal_square_1():
@@ -185,7 +186,7 @@ def test_car_length_three_horizontal_square_1():
         orientation=Orientation.HORIZONTAL,
         start_square=1,
     )
-    assert [1, 2, 3] == b.calculate_vehicle_placement_coverage(
+    assert [1, 2, 3] == b.calculate_vehicle_placement_squares(
         vehicle_placement=placement
     )
 
@@ -197,7 +198,7 @@ def test_car_length_two_horizontal_square_31():
         orientation=Orientation.HORIZONTAL,
         start_square=31,
     )
-    assert [31, 32] == b.calculate_vehicle_placement_coverage(
+    assert [31, 32] == b.calculate_vehicle_placement_squares(
         vehicle_placement=placement
     )
 
@@ -209,7 +210,7 @@ def test_car_length_two_vertical_square_1():
         orientation=Orientation.VERTICAL,
         start_square=1,
     )
-    assert [1, 7] == b.calculate_vehicle_placement_coverage(vehicle_placement=placement)
+    assert [1, 7] == b.calculate_vehicle_placement_squares(vehicle_placement=placement)
 
 
 def test_car_length_three_vertical_square_1():
@@ -219,7 +220,7 @@ def test_car_length_three_vertical_square_1():
         orientation=Orientation.VERTICAL,
         start_square=1,
     )
-    assert [1, 7, 13] == b.calculate_vehicle_placement_coverage(
+    assert [1, 7, 13] == b.calculate_vehicle_placement_squares(
         vehicle_placement=placement
     )
 
@@ -231,9 +232,7 @@ def test_car_length_two_vertical_square_6():
         orientation=Orientation.VERTICAL,
         start_square=6,
     )
-    assert [6, 12] == b.calculate_vehicle_placement_coverage(
-        vehicle_placement=placement
-    )
+    assert [6, 12] == b.calculate_vehicle_placement_squares(vehicle_placement=placement)
 
 
 def test_car_length_three_vertical_square_6():
@@ -243,7 +242,7 @@ def test_car_length_three_vertical_square_6():
         orientation=Orientation.VERTICAL,
         start_square=6,
     )
-    assert [6, 12, 18] == b.calculate_vehicle_placement_coverage(
+    assert [6, 12, 18] == b.calculate_vehicle_placement_squares(
         vehicle_placement=placement
     )
 
@@ -264,3 +263,11 @@ def test_three_car_coverage():
     assert len(g.vehicle_placements) == 3
     covered_squares = sorted(g.calculate_vehicle_placement_coverage_for_all())
     assert [3, 4, 6, 12, 14, 15, 18] == covered_squares
+
+
+def test_three_car_other_coverage():
+    g = three_car_game()
+    assert g.get_vehicle_placement_by_identifier(VehicleID("X"))
+    other_squares = g.calculate_vehicle_placement_coverage_for_others(VehicleID("X"))
+    my_squares = g.get_my_squares_from_board(VehicleID("X"))
+    assert set(other_squares).isdisjoint(my_squares)
