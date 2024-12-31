@@ -113,6 +113,16 @@ class Game:
         self.board = Board()
         self.vehicle_placements = vehicle_placements
 
+    def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
+        coverage = []
+        for p in self.vehicle_placements:
+            coverage.append(
+                self.board.calculate_vehicle_placement_coverage(vehicle_placement=p)
+            )
+
+        flattened_list = [item for sublist in coverage for item in sublist]
+        return flattened_list
+
     moves: list[int]
 
 

@@ -56,7 +56,7 @@ def card_1_game() -> Game:
     return Game(vehicle_placements=placements)
 
 
-def simple_two_car_game() -> Game:
+def two_car_game() -> Game:
     placement = [
         VehiclePlacement(
             Car(identifier=VehicleID("X"), color=Color.RED, length=2),
@@ -67,6 +67,27 @@ def simple_two_car_game() -> Game:
             Car(identifier=VehicleID("A"), color=Color.BLUE, length=3),
             orientation=Orientation.VERTICAL,
             start_square=6,
+        ),
+    ]
+    return Game(vehicle_placements=placement)
+
+
+def three_car_game() -> Game:
+    placement = [
+        VehiclePlacement(
+            Car(identifier=VehicleID("X"), color=Color.RED, length=2),
+            orientation=Orientation.HORIZONTAL,
+            start_square=14,
+        ),
+        VehiclePlacement(
+            Car(identifier=VehicleID("A"), color=Color.BLUE, length=3),
+            orientation=Orientation.VERTICAL,
+            start_square=6,
+        ),
+        VehiclePlacement(
+            Car(identifier=VehicleID("B"), color=Color.GREEN, length=2),
+            orientation=Orientation.HORIZONTAL,
+            start_square=3,
         ),
     ]
     return Game(vehicle_placements=placement)
@@ -227,9 +248,19 @@ def test_car_length_three_vertical_square_6():
     )
 
 
-def test_simple_game_initial_setup():
-    g = simple_two_car_game()
+def test_two_car_initial_setup():
+    g = two_car_game()
     assert g
     assert g.board
     assert g.vehicle_placements
     assert len(g.vehicle_placements) == 2
+
+
+def test_three_car_coverage():
+    g = three_car_game()
+    assert g
+    assert g.board
+    assert g.vehicle_placements
+    assert len(g.vehicle_placements) == 3
+    covered_squares = sorted(g.calculate_vehicle_placement_coverage_for_all())
+    assert [3, 4, 6, 12, 14, 15, 18] == covered_squares
