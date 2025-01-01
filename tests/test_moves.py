@@ -14,42 +14,42 @@ from app.main import (
 def card_1_game() -> Game:
     placements = [
         VehiclePlacement(
-            car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=2),
+            car=Car(id=VehicleID("A"), color=Color.GREEN, length=2),
             orientation=Orientation.HORIZONTAL,
             start_square=1,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("B"), color=Color.PURPLE, length=3),
+            Car(id=VehicleID("B"), color=Color.PURPLE, length=3),
             orientation=Orientation.VERTICAL,
             start_square=7,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("X"), color=Color.RED, length=2),
+            Car(id=VehicleID("X"), color=Color.RED, length=2),
             orientation=Orientation.HORIZONTAL,
             start_square=14,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("D"), color=Color.ORANGE, length=2),
+            Car(id=VehicleID("D"), color=Color.ORANGE, length=2),
             orientation=Orientation.VERTICAL,
             start_square=25,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("E"), color=Color.GREEN, length=3),
+            Car(id=VehicleID("E"), color=Color.GREEN, length=3),
             orientation=Orientation.HORIZONTAL,
             start_square=33,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("F"), color=Color.BLUE, length=3),
+            Car(id=VehicleID("F"), color=Color.BLUE, length=3),
             orientation=Orientation.VERTICAL,
             start_square=10,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("G"), color=Color.BLUE, length=2),
+            Car(id=VehicleID("G"), color=Color.BLUE, length=2),
             orientation=Orientation.HORIZONTAL,
             start_square=29,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("H"), color=Color.YELLOW, length=3),
+            Car(id=VehicleID("H"), color=Color.YELLOW, length=3),
             orientation=Orientation.VERTICAL,
             start_square=6,
         ),
@@ -60,12 +60,12 @@ def card_1_game() -> Game:
 def two_car_game() -> Game:
     placement = [
         VehiclePlacement(
-            Car(identifier=VehicleID("X"), color=Color.RED, length=2),
+            Car(id=VehicleID("X"), color=Color.RED, length=2),
             orientation=Orientation.HORIZONTAL,
             start_square=14,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("A"), color=Color.BLUE, length=3),
+            Car(id=VehicleID("A"), color=Color.BLUE, length=3),
             orientation=Orientation.VERTICAL,
             start_square=6,
         ),
@@ -76,17 +76,17 @@ def two_car_game() -> Game:
 def three_car_game() -> Game:
     placement = [
         VehiclePlacement(
-            Car(identifier=VehicleID("X"), color=Color.RED, length=2),
+            Car(id=VehicleID("X"), color=Color.RED, length=2),
             orientation=Orientation.HORIZONTAL,
             start_square=14,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("A"), color=Color.BLUE, length=3),
+            Car(id=VehicleID("A"), color=Color.BLUE, length=3),
             orientation=Orientation.VERTICAL,
             start_square=6,
         ),
         VehiclePlacement(
-            Car(identifier=VehicleID("B"), color=Color.GREEN, length=2),
+            Car(id=VehicleID("B"), color=Color.GREEN, length=2),
             orientation=Orientation.HORIZONTAL,
             start_square=3,
         ),
@@ -172,7 +172,7 @@ def test_invalid_move_from_square_twelve():
 def test_car_length_two_horizontal_square_1():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=2),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=2),
         orientation=Orientation.HORIZONTAL,
         start_square=1,
     )
@@ -182,7 +182,7 @@ def test_car_length_two_horizontal_square_1():
 def test_car_length_three_horizontal_square_1():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=3),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=3),
         orientation=Orientation.HORIZONTAL,
         start_square=1,
     )
@@ -194,7 +194,7 @@ def test_car_length_three_horizontal_square_1():
 def test_car_length_two_horizontal_square_31():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=2),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=2),
         orientation=Orientation.HORIZONTAL,
         start_square=31,
     )
@@ -206,7 +206,7 @@ def test_car_length_two_horizontal_square_31():
 def test_car_length_two_vertical_square_1():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=2),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=2),
         orientation=Orientation.VERTICAL,
         start_square=1,
     )
@@ -216,7 +216,7 @@ def test_car_length_two_vertical_square_1():
 def test_car_length_three_vertical_square_1():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=3),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=3),
         orientation=Orientation.VERTICAL,
         start_square=1,
     )
@@ -228,7 +228,7 @@ def test_car_length_three_vertical_square_1():
 def test_car_length_two_vertical_square_6():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=2),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=2),
         orientation=Orientation.VERTICAL,
         start_square=6,
     )
@@ -238,7 +238,7 @@ def test_car_length_two_vertical_square_6():
 def test_car_length_three_vertical_square_6():
     b = Board()
     placement = VehiclePlacement(
-        car=Car(identifier=VehicleID("A"), color=Color.GREEN, length=3),
+        car=Car(id=VehicleID("A"), color=Color.GREEN, length=3),
         orientation=Orientation.VERTICAL,
         start_square=6,
     )

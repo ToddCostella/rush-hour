@@ -32,7 +32,7 @@ VehicleID = NewType("VehicleID", str)
 
 @dataclass
 class Car:
-    identifier: VehicleID
+    id: VehicleID
     color: Color
     length: int
 
@@ -127,7 +127,7 @@ class Game:
     ) -> list[int]:
         coverage = []
         for p in self.vehicle_placements:
-            if p.car.identifier != id:
+            if p.car.id != id:
                 coverage.append(
                     self.board.calculate_vehicle_placement_squares(vehicle_placement=p)
                 )
@@ -138,9 +138,7 @@ class Game:
         self, id: VehicleID
     ) -> VehiclePlacement | None:
         match = [
-            placement
-            for placement in self.vehicle_placements
-            if placement.car.identifier == id
+            placement for placement in self.vehicle_placements if placement.car.id == id
         ]
         return match[0] if len(match) == 1 else None
 
