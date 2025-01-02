@@ -7,6 +7,7 @@ from app.main import (
     Orientation,
     Game,
     VehicleID,
+    Move,
 )
 
 
@@ -95,7 +96,7 @@ def three_car_game() -> Game:
 
 def test_valid_move_from_square_five():
     g = Game(vehicle_placements=[])
-    assert g.is_valid_move(5, Direction.RIGHT) == True
+    assert g.is_valid_move(Move(from_position=5, direction=Direction.RIGHT)) == True
 
 
 def test_all_directions_from_square_nine():
@@ -140,32 +141,32 @@ def test_move_all_directions_from_square_thirty_six():
 
 def test_invalid_move_from_square_one():
     g = Game(vehicle_placements=[])
-    assert g.is_valid_move(1, Direction.UP) == False
-    assert g.is_valid_move(1, Direction.LEFT) == False
+    assert g.is_valid_move(Move(from_position=1, direction=Direction.UP)) == False
+    assert g.is_valid_move(Move(from_position=1, direction=Direction.LEFT)) == False
 
 
 def test_invalid_move_from_square_six():
     g = Game(vehicle_placements=[])
-    assert g.is_valid_move(6, Direction.UP) == False
-    assert g.is_valid_move(6, Direction.RIGHT) == False
+    assert g.is_valid_move(Move(from_position=6, direction=Direction.UP)) == False
+    assert g.is_valid_move(Move(from_position=6, direction=Direction.RIGHT)) == False
 
 
 def test_invalid_move_from_square_thirty_one():
     g = Game(vehicle_placements=[])
-    assert g.is_valid_move(31, Direction.DOWN) == False
-    assert g.is_valid_move(31, Direction.LEFT) == False
+    assert g.is_valid_move(Move(from_position=31, direction=Direction.DOWN)) == False
+    assert g.is_valid_move(Move(from_position=31, direction=Direction.LEFT)) == False
 
 
 def test_invalid_move_from_square_thirty_six():
     g = Game(vehicle_placements=[])
-    assert g.is_valid_move(36, Direction.DOWN) == False
-    assert g.is_valid_move(36, Direction.RIGHT) == False
+    assert g.is_valid_move(Move(from_position=36, direction=Direction.DOWN)) == False
+    assert g.is_valid_move(Move(from_position=36, direction=Direction.RIGHT)) == False
 
 
 def test_invalid_move_from_square_twelve():
     g = Game(vehicle_placements=[])
-    assert g.is_valid_move(12, Direction.UP) == True
-    assert g.is_valid_move(12, Direction.RIGHT) == False
+    assert g.is_valid_move(Move(from_position=12, direction=Direction.UP)) == True
+    assert g.is_valid_move(Move(from_position=12, direction=Direction.RIGHT)) == False
 
 
 def test_car_length_two_horizontal_square_1():

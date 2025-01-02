@@ -44,6 +44,12 @@ class VehiclePlacement:
     start_square: int
 
 
+@dataclass
+class Move:
+    from_position: int
+    direction: Direction
+
+
 class Game:
     SIZE: int = 6
 
@@ -90,43 +96,57 @@ class Game:
     def move_up(self, current_pos: int) -> int:
         return (
             current_pos - self.SIZE
-            if self.is_valid_move(current_pos, Direction.UP)
+            if self.is_valid_move(
+                Move(from_position=current_pos, direction=Direction.UP)
+            )
             else 0
         )
 
     def move_down(self, current_pos: int) -> int:
         return (
             current_pos + self.SIZE
-            if self.is_valid_move(current_pos, Direction.DOWN)
+            if self.is_valid_move(
+                Move(from_position=current_pos, direction=Direction.DOWN)
+            )
             else 0
         )
 
     def move_left(self, current_pos: int) -> int:
-        return current_pos - 1 if self.is_valid_move(current_pos, Direction.LEFT) else 0
+        return (
+            current_pos - 1
+            if self.is_valid_move(
+                Move(from_position=current_pos, direction=Direction.LEFT)
+            )
+            else 0
+        )
 
     def move_right(self, current_pos: int) -> int:
         return (
-            current_pos + 1 if self.is_valid_move(current_pos, Direction.RIGHT) else 0
+            current_pos + 1
+            if self.is_valid_move(
+                Move(from_position=current_pos, direction=Direction.RIGHT)
+            )
+            else 0
         )
 
-    def is_valid_move(self, current_pos: int, direction: Direction) -> bool:
+    def is_valid_move(self, move: Move) -> bool:
         is_valid = False
-        match direction:
+        match move.direction:
             case Direction.UP:
-                new_pos = current_pos - self.SIZE
+                new_pos = move.from_position - self.SIZE
                 is_valid = new_pos > 0
             case Direction.DOWN:
-                new_pos = current_pos + self.SIZE
+                new_pos = move.from_position + self.SIZE
                 is_valid = new_pos < (self.SIZE * self.SIZE)
             case Direction.LEFT:
-                new_pos = current_pos - 1
+                new_pos = move.from_position - 1
                 has_not_underflowed_row = new_pos > 0
-                has_not_underflowed_column = current_pos % self.SIZE != 1
+                has_not_underflowed_column = move.from_position % self.SIZE != 1
                 is_valid = has_not_underflowed_column and has_not_underflowed_row
             case Direction.RIGHT:
-                new_pos = current_pos + 1
+                new_pos = move.from_position + 1
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
-                has_not_overflowed_column = current_pos % self.SIZE != 0
+                has_not_overflowed_column = move.from_position % self.SIZE != 0
                 is_valid = has_not_overflowed_column and has_not_overflowed_row
         return is_valid
 
