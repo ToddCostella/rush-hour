@@ -110,25 +110,26 @@ class Game:
         )
 
     def is_valid_move(self, current_pos: int, direction: Direction) -> bool:
+        is_valid = False
         match direction:
             case Direction.UP:
                 new_pos = current_pos - self.SIZE
-                return new_pos > 0
+                is_valid = new_pos > 0
             case Direction.DOWN:
                 new_pos = current_pos + self.SIZE
-                return new_pos < (self.SIZE * self.SIZE)
+                is_valid = new_pos < (self.SIZE * self.SIZE)
             case Direction.LEFT:
                 new_pos = current_pos - 1
                 has_not_underflowed_row = new_pos > 0
                 has_not_underflowed_column = current_pos % self.SIZE != 1
-                return has_not_underflowed_column and has_not_underflowed_row
+                is_valid = has_not_underflowed_column and has_not_underflowed_row
             case Direction.RIGHT:
                 new_pos = current_pos + 1
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
                 has_not_overflowed_column = current_pos % self.SIZE != 0
-                return has_not_overflowed_column and has_not_overflowed_row
+                is_valid = has_not_overflowed_column and has_not_overflowed_row
+        return is_valid
 
-    # Returns a list of board placements given a car and it's initial placement
     def calculate_vehicle_placement_squares(
         self, vehicle_placement: VehiclePlacement
     ) -> list[int]:
