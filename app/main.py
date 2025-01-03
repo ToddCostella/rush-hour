@@ -104,16 +104,14 @@ class Game:
         flattened_list = sorted([item for sublist in coverage for item in sublist])
         return flattened_list
 
-    def get_vehicle_placement_by_identifier(
-        self, id: VehicleID
-    ) -> VehiclePlacement | None:
+    def get_vehicle_placement_for_car(self, car: Car) -> VehiclePlacement:
         match = [
-            placement for placement in self.vehicle_placements if placement.car.id == id
+            placement for placement in self.vehicle_placements if placement.car == car
         ]
-        return match[0] if len(match) == 1 else None
+        return match[0]
 
     def get_my_squares_from_board(self, id: VehicleID) -> list[int]:
-        placement = self.get_vehicle_placement_by_identifier(id)
+        placement = self.get_vehicle_placement_for_car(id)
         my_squares = []
         if placement is not None:
             my_squares = self.calculate_vehicle_placement_squares(
@@ -135,7 +133,7 @@ class Game:
             )
             new_placement.coverage = my_new_squares
 
-        return (is_valid_move, new_placement)
+        return is_valid_move, new_placement
 
     # TODO: Need to add collistion logic here
     def is_valid_move(self, move: Move) -> Tuple[bool, int]:
@@ -146,23 +144,37 @@ class Game:
             case Direction.UP:
                 current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos - self.SIZE
-                is_valid = new_pos > 0
+                is_valid = (
+                    new_pos > 0
+                    and move.vehicle_placement.orientation == Orientation.VERTICAL
+                )
             case Direction.DOWN:
                 current_pos = max(move.vehicle_placement.coverage)
                 new_pos = current_pos + self.SIZE
-                is_valid = new_pos < (self.SIZE * self.SIZE)
+                is_valid = (
+                    new_pos < (self.SIZE * self.SIZE)
+                    and move.vehicle_placement.orientation == Orientation.VERTICAL
+                )
             case Direction.LEFT:
                 current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos - 1
                 has_not_underflowed_row = new_pos > 0
                 has_not_underflowed_column = current_pos % self.SIZE != 1
-                is_valid = has_not_underflowed_column and has_not_underflowed_row
+                is_valid = (
+                    has_not_underflowed_column
+                    and has_not_underflowed_row
+                    and move.vehicle_placement.orientation == Orientation.HORIZONTAL
+                )
             case Direction.RIGHT:
-                current_pos = max(move.vehicle_placement.coverage)
+                current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos + 1
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
                 has_not_overflowed_column = current_pos % self.SIZE != 0
-                is_valid = has_not_overflowed_column and has_not_overflowed_row
+                is_valid = (
+                    has_not_overflowed_column
+                    and has_not_overflowed_row
+                    and move.vehicle_placement.orientation == Orientation.HORIZONTAL
+                )
         return (is_valid, new_pos)
 
     def calculate_vehicle_placement_squares(
