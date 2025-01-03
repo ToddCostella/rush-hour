@@ -8,11 +8,19 @@ from app.main import (
     Game,
     VehicleID,
     Move,
+    PuzzleEntry,
+    PuzzleCard,
 )
 
 car_x = Car(id=VehicleID("X"), color=Color.RED, length=2)
 car_a = Car(id=VehicleID("A"), color=Color.BLUE, length=3)
 car_b = Car(id=VehicleID("B"), color=Color.GREEN, length=2)
+
+
+def one_car_puzzle():
+    car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 9)
+    puzzle_card = PuzzleCard([car_x_entry])
+    return Game(puzzle_card=puzzle_card)
 
 
 def two_car_game() -> Game:

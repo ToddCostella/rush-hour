@@ -1,7 +1,7 @@
 from enum import Enum
 from icecream import ic
 from dataclasses import dataclass
-from typing import NewType, Tuple
+from typing import NewType, Tuple, List
 import copy
 
 
@@ -39,6 +39,18 @@ class Car:
 
 
 @dataclass
+class PuzzleEntry:
+    car: Car
+    orientation: Orientation
+    starting_position: int
+
+
+@dataclass
+class PuzzleCard:
+    setup: List[PuzzleEntry]
+
+
+@dataclass
 class VehiclePlacement:
     car: Car
     orientation: Orientation
@@ -54,8 +66,17 @@ class Move:
 class Game:
     SIZE: int = 6
 
-    def __init__(self, vehicle_placements) -> None:
-        # TODO populate coverage array for all placements. Using the first index of the array as the starting point. Seems smelly
+    def __init__(self, puzzle_card: PuzzleCard) -> None:
+        vehicle_placements = []
+        for pe in puzzle_card.setup:
+            placment = VehiclePlacement(
+                pe.car,
+                pe.orientation,
+                self.calculate_vehicle_placement_squares(
+                    pe.starting_position, pe.car, pe.orientation
+                ),
+            )
+            vehicle_placements.append(placment)
         self.vehicle_placements = vehicle_placements
 
     def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
