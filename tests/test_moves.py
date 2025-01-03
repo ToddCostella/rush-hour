@@ -34,7 +34,7 @@ def three_car_game() -> Game:
 
     car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 14)
     car_a_entry = PuzzleEntry(car_a, Orientation.HORIZONTAL, 6)
-    car_b_entry = PuzzleEntry(car_b, Orientation.HORIZONTAL, 3)
+    car_b_entry = PuzzleEntry(car_b, Orientation.VERTICAL, 3)
     puzzle_card = PuzzleCard([car_x_entry, car_a_entry, car_b_entry])
     return Game(puzzle_card=puzzle_card)
 
@@ -69,6 +69,30 @@ def test_invalid_move_down_from_square_nine():
     is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.DOWN))
     assert not is_valid
     assert new_placement.coverage == car_x_placement.coverage
+
+
+def test_valid_move_down_from_square_three():
+    g = three_car_game()
+    car_b_placement = g.get_vehicle_placement_for_car(car_b)
+    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.DOWN))
+    assert is_valid
+    assert new_placement.coverage == [9, 15]
+
+
+def test_invalid_move_left_from_square_three():
+    g = three_car_game()
+    car_b_placement = g.get_vehicle_placement_for_car(car_b)
+    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.LEFT))
+    assert not is_valid
+    assert new_placement.coverage == car_b_placement.coverage
+
+
+def test_invalid_move_right_from_square_three():
+    g = three_car_game()
+    car_b_placement = g.get_vehicle_placement_for_car(car_b)
+    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.RIGHT))
+    assert not is_valid
+    assert new_placement.coverage == car_b_placement.coverage
 
 
 # def test_all_directions_from_square_nine():

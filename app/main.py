@@ -149,7 +149,7 @@ class Game:
                     and move.vehicle_placement.orientation == Orientation.VERTICAL
                 )
             case Direction.DOWN:
-                current_pos = max(move.vehicle_placement.coverage)
+                current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos + self.SIZE
                 is_valid = (
                     new_pos < (self.SIZE * self.SIZE)
