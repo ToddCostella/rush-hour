@@ -1,7 +1,8 @@
 from enum import Enum
 from icecream import ic
 from dataclasses import dataclass
-from typing import NewType
+from typing import NewType, Tuple
+import copy
 
 
 class Direction(Enum):
@@ -41,12 +42,12 @@ class Car:
 class VehiclePlacement:
     car: Car
     orientation: Orientation
-    start_square: int
+    coverage: list[int]
 
 
 @dataclass
 class Move:
-    from_position: int
+    vehicle_placement: VehiclePlacement
     direction: Direction
 
 
@@ -54,13 +55,16 @@ class Game:
     SIZE: int = 6
 
     def __init__(self, vehicle_placements) -> None:
+        # TODO populate coverage array for all placements. Using the first index of the array as the starting point. Seems smelly
         self.vehicle_placements = vehicle_placements
 
     def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
         coverage = []
         for p in self.vehicle_placements:
             coverage.append(
-                self.calculate_vehicle_placement_squares(vehicle_placement=p)
+                self.calculate_vehicle_placement_squares(
+                    p.coverage[0], car=p.car, orientation=p.orientation
+                )
             )
         flattened_list = [item for sublist in coverage for item in sublist]
         return flattened_list
@@ -72,7 +76,9 @@ class Game:
         for p in self.vehicle_placements:
             if p.car.id != id:
                 coverage.append(
-                    self.calculate_vehicle_placement_squares(vehicle_placement=p)
+                    self.calculate_vehicle_placement_squares(
+                        p.coverage[0], car=p.car, orientation=p.orientation
+                    )
                 )
         flattened_list = sorted([item for sublist in coverage for item in sublist])
         return flattened_list
@@ -89,83 +95,70 @@ class Game:
         placement = self.get_vehicle_placement_by_identifier(id)
         my_squares = []
         if placement is not None:
-            my_squares = self.calculate_vehicle_placement_squares(placement)
+            my_squares = self.calculate_vehicle_placement_squares(
+                start_square=placement.coverage[0],
+                car=placement.car,
+                orientation=placement.orientation,
+            )
 
         return my_squares
 
-    def move_up(self, current_pos: int) -> int:
-        return (
-            current_pos - self.SIZE
-            if self.is_valid_move(
-                Move(from_position=current_pos, direction=Direction.UP)
+    def move(self, move: Move) -> Tuple[bool, VehiclePlacement]:
+        new_placement = copy.copy(move.vehicle_placement)
+        (is_valid_move, new_pos) = self.is_valid_move(move)
+        if is_valid_move:
+            my_new_squares = self.calculate_vehicle_placement_squares(
+                start_square=new_pos,
+                car=new_placement.car,
+                orientation=new_placement.orientation,
             )
-            else 0
-        )
+            new_placement.coverage = my_new_squares
 
-    def move_down(self, current_pos: int) -> int:
-        return (
-            current_pos + self.SIZE
-            if self.is_valid_move(
-                Move(from_position=current_pos, direction=Direction.DOWN)
-            )
-            else 0
-        )
+        return (is_valid_move, new_placement)
 
-    def move_left(self, current_pos: int) -> int:
-        return (
-            current_pos - 1
-            if self.is_valid_move(
-                Move(from_position=current_pos, direction=Direction.LEFT)
-            )
-            else 0
-        )
-
-    def move_right(self, current_pos: int) -> int:
-        return (
-            current_pos + 1
-            if self.is_valid_move(
-                Move(from_position=current_pos, direction=Direction.RIGHT)
-            )
-            else 0
-        )
-
-    def is_valid_move(self, move: Move) -> bool:
+    # TODO: Need to add collistion logic here
+    def is_valid_move(self, move: Move) -> Tuple[bool, int]:
         is_valid = False
+        new_pos = 0
+
         match move.direction:
             case Direction.UP:
-                new_pos = move.from_position - self.SIZE
+                current_pos = min(move.vehicle_placement.coverage)
+                new_pos = current_pos - self.SIZE
                 is_valid = new_pos > 0
             case Direction.DOWN:
-                new_pos = move.from_position + self.SIZE
+                current_pos = max(move.vehicle_placement.coverage)
+                new_pos = current_pos + self.SIZE
                 is_valid = new_pos < (self.SIZE * self.SIZE)
             case Direction.LEFT:
-                new_pos = move.from_position - 1
+                current_pos = min(move.vehicle_placement.coverage)
+                new_pos = current_pos - 1
                 has_not_underflowed_row = new_pos > 0
-                has_not_underflowed_column = move.from_position % self.SIZE != 1
+                has_not_underflowed_column = current_pos % self.SIZE != 1
                 is_valid = has_not_underflowed_column and has_not_underflowed_row
             case Direction.RIGHT:
-                new_pos = move.from_position + 1
+                current_pos = max(move.vehicle_placement.coverage)
+                new_pos = current_pos + 1
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
-                has_not_overflowed_column = move.from_position % self.SIZE != 0
+                has_not_overflowed_column = current_pos % self.SIZE != 0
                 is_valid = has_not_overflowed_column and has_not_overflowed_row
-        return is_valid
+        return (is_valid, new_pos)
 
     def calculate_vehicle_placement_squares(
-        self, vehicle_placement: VehiclePlacement
+        self, start_square: int, car: Car, orientation: Orientation
     ) -> list[int]:
         squares = []
-        if vehicle_placement.orientation == Orientation.HORIZONTAL:
+
+        if orientation == Orientation.HORIZONTAL:
             squares = list(
                 range(
-                    vehicle_placement.start_square,
-                    vehicle_placement.start_square + vehicle_placement.car.length,
+                    start_square,
+                    start_square + car.length,
                 )
             )
-        if vehicle_placement.orientation == Orientation.VERTICAL:
-            for vertical_placement in range(0, vehicle_placement.car.length):
-                squares.append(
-                    vehicle_placement.start_square + (vertical_placement * self.SIZE)
-                )
+        if orientation == Orientation.VERTICAL:
+            for placement in range(0, car.length):
+                squares.append(start_square + (placement * self.SIZE))
         return squares
 
     moves: list[int]

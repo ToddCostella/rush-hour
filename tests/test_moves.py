@@ -10,65 +10,19 @@ from app.main import (
     Move,
 )
 
-
-def card_1_game() -> Game:
-    placements = [
-        VehiclePlacement(
-            car=Car(id=VehicleID("A"), color=Color.GREEN, length=2),
-            orientation=Orientation.HORIZONTAL,
-            start_square=1,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("B"), color=Color.PURPLE, length=3),
-            orientation=Orientation.VERTICAL,
-            start_square=7,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("X"), color=Color.RED, length=2),
-            orientation=Orientation.HORIZONTAL,
-            start_square=14,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("D"), color=Color.ORANGE, length=2),
-            orientation=Orientation.VERTICAL,
-            start_square=25,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("E"), color=Color.GREEN, length=3),
-            orientation=Orientation.HORIZONTAL,
-            start_square=33,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("F"), color=Color.BLUE, length=3),
-            orientation=Orientation.VERTICAL,
-            start_square=10,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("G"), color=Color.BLUE, length=2),
-            orientation=Orientation.HORIZONTAL,
-            start_square=29,
-        ),
-        VehiclePlacement(
-            Car(id=VehicleID("H"), color=Color.YELLOW, length=3),
-            orientation=Orientation.VERTICAL,
-            start_square=6,
-        ),
-    ]
-    return Game(vehicle_placements=placements)
+car_x = Car(id=VehicleID("X"), color=Color.RED, length=2)
+car_a = Car(id=VehicleID("A"), color=Color.BLUE, length=3)
+car_b = Car(id=VehicleID("B"), color=Color.GREEN, length=2)
 
 
 def two_car_game() -> Game:
     placement = [
         VehiclePlacement(
-            Car(id=VehicleID("X"), color=Color.RED, length=2),
+            car=car_x,
             orientation=Orientation.HORIZONTAL,
-            start_square=14,
+            coverage=[14],
         ),
-        VehiclePlacement(
-            Car(id=VehicleID("A"), color=Color.BLUE, length=3),
-            orientation=Orientation.VERTICAL,
-            start_square=6,
-        ),
+        VehiclePlacement(car=car_a, orientation=Orientation.VERTICAL, coverage=[6]),
     ]
     return Game(vehicle_placements=placement)
 
@@ -76,19 +30,19 @@ def two_car_game() -> Game:
 def three_car_game() -> Game:
     placement = [
         VehiclePlacement(
-            Car(id=VehicleID("X"), color=Color.RED, length=2),
+            car_x,
             orientation=Orientation.HORIZONTAL,
-            start_square=14,
+            coverage=[14],
         ),
         VehiclePlacement(
-            Car(id=VehicleID("A"), color=Color.BLUE, length=3),
+            car_a,
             orientation=Orientation.VERTICAL,
-            start_square=6,
+            coverage=[6],
         ),
         VehiclePlacement(
-            Car(id=VehicleID("B"), color=Color.GREEN, length=2),
+            car_b,
             orientation=Orientation.HORIZONTAL,
-            start_square=3,
+            coverage=[3],
         ),
     ]
     return Game(vehicle_placements=placement)
