@@ -77,6 +77,38 @@ def test_invalid_move_down_from_square_nine():
     assert new_placement.coverage == car_x_placement.coverage
 
 
+def test_valid_move_down_from_square_nine():
+    g = one_car_game_vertical()
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.DOWN))
+    assert is_valid
+    assert new_placement.coverage == [15, 21]
+
+
+def test_valid_move_up_from_square_nine():
+    g = one_car_game_vertical()
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.UP))
+    assert is_valid
+    assert new_placement.coverage == [3, 9]
+
+
+def test_invalid_move_right_from_square_nine():
+    g = one_car_game_vertical()
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.RIGHT))
+    assert not is_valid
+    assert new_placement.coverage == car_x_placement.coverage
+
+
+def test_invalid_move_left_from_square_nine():
+    g = one_car_game_vertical()
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.LEFT))
+    assert not is_valid
+    assert new_placement.coverage == car_x_placement.coverage
+
+
 # TODO This should actually fail because car X is on position 9
 # I think we need another one car vertical game to test vertical movements
 def test_valid_move_down_from_square_three():
