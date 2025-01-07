@@ -65,6 +65,7 @@ class Move:
 
 class Game:
     SIZE: int = 6
+    moves: list[Move]
 
     def __init__(self, puzzle_card: PuzzleCard) -> None:
         vehicle_placements = []
@@ -77,7 +78,7 @@ class Game:
                 ),
             )
             vehicle_placements.append(placment)
-        self.vehicle_placements = vehicle_placements
+        self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
 
     def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
         coverage = []
@@ -135,7 +136,13 @@ class Game:
             )
             new_placement.coverage = my_new_squares
 
+        self.update_vehicle_placement(move.vehicle_placement, new_placement)
+        self.moves.append(move)
         return is_valid_move, new_placement
+
+    def update_vehicle_placement(self, old: VehiclePlacement, new: VehiclePlacement):
+        self.vehicle_placements.remove(old)
+        self.vehicle_placements.append(new)
 
     # TODO: Need to add collistion logic here
     def is_valid_move(self, move: Move) -> Tuple[bool, int]:
@@ -195,8 +202,6 @@ class Game:
             for placement in range(0, car.length):
                 squares.append(start_square + (placement * self.SIZE))
         return squares
-
-    moves: list[int]
 
     def print_game(self):
         # Geneate a dictionary in which the keys are the the number of the square occupied and the vlaue is the car occupying the square

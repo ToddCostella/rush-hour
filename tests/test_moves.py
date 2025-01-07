@@ -1,4 +1,4 @@
-from icecream import ic
+# from icecream import ic
 from app.main import (
     Direction,
     Car,
@@ -39,7 +39,7 @@ def two_car_game() -> Game:
 def three_car_game() -> Game:
 
     car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 14)
-    car_a_entry = PuzzleEntry(car_a, Orientation.HORIZONTAL, 6)
+    car_a_entry = PuzzleEntry(car_a, Orientation.VERTICAL, 6)
     car_b_entry = PuzzleEntry(car_b, Orientation.VERTICAL, 3)
     puzzle_card = PuzzleCard([car_x_entry, car_a_entry, car_b_entry])
     return Game(puzzle_card=puzzle_card)
@@ -111,12 +111,14 @@ def test_invalid_move_left_from_square_nine():
 
 # TODO This should actually fail because car X is on position 9
 # I think we need another one car vertical game to test vertical movements
-def test_valid_move_down_from_square_three():
+def test_valid_move_down_from_square_six():
     g = three_car_game()
-    car_b_placement = g.get_vehicle_placement_for_car(car_b)
-    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.DOWN))
+    g.print_game()
+    car_a_placement = g.get_vehicle_placement_for_car(car_a)
+    is_valid, new_placement = g.move(Move(car_a_placement, direction=Direction.DOWN))
+    g.print_game()
     assert is_valid
-    assert new_placement.coverage == [9, 15]
+    assert new_placement.coverage == [12, 18, 24]
 
 
 def test_invalid_move_left_from_square_three():
