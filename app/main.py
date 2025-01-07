@@ -106,12 +106,14 @@ class Game:
 
     def get_vehicle_placement_for_car(self, car: Car) -> VehiclePlacement:
         match = [
-            placement for placement in self.vehicle_placements if placement.car == car
+            placement
+            for placement in self.vehicle_placements
+            if placement.car.id == car.id
         ]
         return match[0]
 
-    def get_my_squares_from_board(self, id: VehicleID) -> list[int]:
-        placement = self.get_vehicle_placement_for_car(id)
+    def get_my_squares_from_board(self, car: Car) -> list[int]:
+        placement = self.get_vehicle_placement_for_car(car)
         my_squares = []
         if placement is not None:
             my_squares = self.calculate_vehicle_placement_squares(
@@ -195,6 +197,24 @@ class Game:
         return squares
 
     moves: list[int]
+
+    def print_game(self):
+        # Geneate a dictionary in which the keys are the the number of the square occupied and the vlaue is the car occupying the square
+        car_squares = {
+            square: p.car for p in self.vehicle_placements for square in p.coverage
+        }
+        print("")
+        for row in range(0, self.SIZE):
+            for column in range(1, self.SIZE + 1):
+                square = row * self.SIZE + column
+                # If the square is occupied, print the car id, otherwise print the number of the square
+                if square in car_squares:
+                    car = car_squares[square]
+                    print(f"| {car.id} ", end="")
+                else:
+                    print(f"|{square:2} ", end="")
+                if column % self.SIZE == 0:
+                    print("|")
 
 
 # if __name__ == "__main__":
