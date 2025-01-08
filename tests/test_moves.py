@@ -47,16 +47,14 @@ def three_car_game() -> Game:
 
 def test_valid_move_right_from_square_nine():
     g = one_car_game_horizontal()
-    car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.RIGHT))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.RIGHT))
     assert is_valid
     assert new_placement.coverage == [10, 11]
 
 
 def test_valid_move_left_from_square_nine():
     g = one_car_game_horizontal()
-    car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.LEFT))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.LEFT))
     assert is_valid
     assert new_placement.coverage == [8, 9]
 
@@ -64,7 +62,7 @@ def test_valid_move_left_from_square_nine():
 def test_invalid_move_up_from_square_nine():
     g = one_car_game_horizontal()
     car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.UP))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.UP))
     assert not is_valid
     assert new_placement.coverage == car_x_placement.coverage
 
@@ -72,23 +70,21 @@ def test_invalid_move_up_from_square_nine():
 def test_invalid_move_down_from_square_nine():
     g = one_car_game_horizontal()
     car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.DOWN))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.DOWN))
     assert not is_valid
     assert new_placement.coverage == car_x_placement.coverage
 
 
 def test_valid_move_down_from_square_nine():
     g = one_car_game_vertical()
-    car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.DOWN))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.DOWN))
     assert is_valid
     assert new_placement.coverage == [15, 21]
 
 
 def test_valid_move_up_from_square_nine():
     g = one_car_game_vertical()
-    car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.UP))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.UP))
     assert is_valid
     assert new_placement.coverage == [3, 9]
 
@@ -96,7 +92,7 @@ def test_valid_move_up_from_square_nine():
 def test_invalid_move_right_from_square_nine():
     g = one_car_game_vertical()
     car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.RIGHT))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.RIGHT))
     assert not is_valid
     assert new_placement.coverage == car_x_placement.coverage
 
@@ -104,15 +100,14 @@ def test_invalid_move_right_from_square_nine():
 def test_invalid_move_left_from_square_nine():
     g = one_car_game_vertical()
     car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.LEFT))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.LEFT))
     assert not is_valid
     assert new_placement.coverage == car_x_placement.coverage
 
 
 def test_valid_move_down_from_square_six():
     g = three_car_game()
-    car_a_placement = g.get_vehicle_placement_for_car(car_a)
-    is_valid, new_placement = g.move(Move(car_a_placement, direction=Direction.DOWN))
+    is_valid, new_placement = g.move(Move(car_a, direction=Direction.DOWN))
     assert is_valid
     assert new_placement.coverage == [12, 18, 24]
 
@@ -120,7 +115,7 @@ def test_valid_move_down_from_square_six():
 def test_invalid_move_left_from_square_three():
     g = three_car_game()
     car_b_placement = g.get_vehicle_placement_for_car(car_b)
-    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.LEFT))
+    is_valid, new_placement = g.move(Move(car_b, direction=Direction.LEFT))
     assert not is_valid
     assert new_placement.coverage == car_b_placement.coverage
 
@@ -128,7 +123,7 @@ def test_invalid_move_left_from_square_three():
 def test_invalid_move_right_from_square_three():
     g = three_car_game()
     car_b_placement = g.get_vehicle_placement_for_car(car_b)
-    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.RIGHT))
+    is_valid, new_placement = g.move(Move(car_b, direction=Direction.RIGHT))
     assert not is_valid
     assert new_placement.coverage == car_b_placement.coverage
 
@@ -136,21 +131,17 @@ def test_invalid_move_right_from_square_three():
 def test_vertical_collision():
     g = three_car_game()
     car_b_placement = g.get_vehicle_placement_for_car(car_b)
-    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.DOWN))
+    is_valid, new_placement = g.move(Move(car_b, direction=Direction.DOWN))
     assert not is_valid
     assert new_placement.coverage == car_b_placement.coverage
 
 
 def test_horizontal_collision():
     g = three_car_game()
+    g.move(Move(car_x, direction=Direction.RIGHT))
+    g.move(Move(car_x, direction=Direction.RIGHT))
     car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    g.move(Move(car_x_placement, direction=Direction.RIGHT))
-    # Get the new placement for the car from the game as it has been replaced by the move.
-    # TODO: Maybe move should just take the car and derive the placement....
-    car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    g.move(Move(car_x_placement, direction=Direction.RIGHT))
-    car_x_placement = g.get_vehicle_placement_for_car(car_x)
-    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.RIGHT))
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.RIGHT))
     assert not is_valid
     assert new_placement.coverage == car_x_placement.coverage
 

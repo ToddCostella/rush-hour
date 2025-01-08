@@ -60,7 +60,7 @@ class VehiclePlacement:
 
 @dataclass
 class Move:
-    vehicle_placement: VehiclePlacement
+    car: Car
     direction: Direction
 
 
@@ -129,7 +129,8 @@ class Game:
         return my_squares
 
     def move(self, move: Move) -> Tuple[bool, VehiclePlacement]:
-        new_placement = copy.copy(move.vehicle_placement)
+        placement = self.get_vehicle_placement_for_car(move.car)
+        new_placement = copy.copy(placement)
         (is_valid_move, new_pos) = self.is_valid_move(move)
         if is_valid_move:
             my_new_squares = self.calculate_vehicle_placement_squares(
@@ -140,7 +141,7 @@ class Game:
             new_placement.coverage = my_new_squares
 
         # Update the list of vehicle_placements by removing the old placement and replacing it with the new placement
-        self.vehicle_placements.remove(move.vehicle_placement)
+        self.vehicle_placements.remove(placement)
         self.vehicle_placements.append(new_placement)
         self.moves.append(move)
         return is_valid_move, new_placement
@@ -150,22 +151,20 @@ class Game:
         new_pos = 0
 
         other_vehicle_sqaures = self.calculate_vehicle_placement_coverage_for_others(
-            move.vehicle_placement.car.id
+            move.car.id
         )
 
-        current_pos = min(move.vehicle_placement.coverage)
+        placement = self.get_vehicle_placement_for_car(move.car)
+        current_pos = min(placement.coverage)
         match move.direction:
             case Direction.UP:
                 new_pos = current_pos - self.SIZE
-                is_valid = (
-                    new_pos > 0
-                    and move.vehicle_placement.orientation == Orientation.VERTICAL
-                )
+                is_valid = new_pos > 0 and placement.orientation == Orientation.VERTICAL
             case Direction.DOWN:
                 new_pos = current_pos + self.SIZE
                 is_valid = (
                     new_pos < (self.SIZE * self.SIZE)
-                    and move.vehicle_placement.orientation == Orientation.VERTICAL
+                    and placement.orientation == Orientation.VERTICAL
                 )
             case Direction.LEFT:
                 new_pos = current_pos - 1
@@ -174,7 +173,7 @@ class Game:
                 is_valid = (
                     has_not_underflowed_column
                     and has_not_underflowed_row
-                    and move.vehicle_placement.orientation == Orientation.HORIZONTAL
+                    and placement.orientation == Orientation.HORIZONTAL
                 )
             case Direction.RIGHT:
                 new_pos = current_pos + 1
@@ -183,12 +182,12 @@ class Game:
                 is_valid = (
                     has_not_overflowed_column
                     and has_not_overflowed_row
-                    and move.vehicle_placement.orientation == Orientation.HORIZONTAL
+                    and placement.orientation == Orientation.HORIZONTAL
                 )
         new_coverage = self.calculate_vehicle_placement_squares(
             new_pos,
-            move.vehicle_placement.car,
-            move.vehicle_placement.orientation,
+            move.car,
+            placement.orientation,
         )
         is_valid = is_valid and not any(
             item in other_vehicle_sqaures for item in new_coverage
