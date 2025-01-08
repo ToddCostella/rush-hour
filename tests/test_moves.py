@@ -135,10 +135,8 @@ def test_invalid_move_right_from_square_three():
 
 def test_vertical_collision():
     g = three_car_game()
-    g.print_game()
     car_b_placement = g.get_vehicle_placement_for_car(car_b)
     is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.DOWN))
-    g.print_game()
     assert not is_valid
     assert new_placement.coverage == car_b_placement.coverage
 

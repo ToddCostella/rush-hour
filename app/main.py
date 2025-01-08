@@ -152,7 +152,6 @@ class Game:
         other_vehicle_sqaures = self.calculate_vehicle_placement_coverage_for_others(
             move.vehicle_placement.car.id
         )
-        ic(other_vehicle_sqaures)
 
         match move.direction:
             case Direction.UP:
@@ -176,7 +175,6 @@ class Game:
                     move.vehicle_placement.car,
                     move.vehicle_placement.orientation,
                 )
-                ic(new_coverage)
                 is_valid = (
                     new_pos < (self.SIZE * self.SIZE)
                     and move.vehicle_placement.orientation == Orientation.VERTICAL
