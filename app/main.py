@@ -79,6 +79,7 @@ class Game:
             )
             vehicle_placements.append(placment)
         self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
+        self.moves = []
 
     def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
         coverage = []
@@ -144,45 +145,74 @@ class Game:
         self.vehicle_placements.remove(old)
         self.vehicle_placements.append(new)
 
-    # TODO: Need to add collistion logic here
     def is_valid_move(self, move: Move) -> Tuple[bool, int]:
         is_valid = False
         new_pos = 0
+
+        other_vehicle_sqaures = self.calculate_vehicle_placement_coverage_for_others(
+            move.vehicle_placement.car.id
+        )
+        ic(other_vehicle_sqaures)
 
         match move.direction:
             case Direction.UP:
                 current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos - self.SIZE
+                new_coverage = self.calculate_vehicle_placement_squares(
+                    new_pos,
+                    move.vehicle_placement.car,
+                    move.vehicle_placement.orientation,
+                )
                 is_valid = (
                     new_pos > 0
                     and move.vehicle_placement.orientation == Orientation.VERTICAL
+                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
             case Direction.DOWN:
                 current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos + self.SIZE
+                new_coverage = self.calculate_vehicle_placement_squares(
+                    new_pos,
+                    move.vehicle_placement.car,
+                    move.vehicle_placement.orientation,
+                )
+                ic(new_coverage)
                 is_valid = (
                     new_pos < (self.SIZE * self.SIZE)
                     and move.vehicle_placement.orientation == Orientation.VERTICAL
+                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
             case Direction.LEFT:
                 current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos - 1
+                new_coverage = self.calculate_vehicle_placement_squares(
+                    new_pos,
+                    move.vehicle_placement.car,
+                    move.vehicle_placement.orientation,
+                )
                 has_not_underflowed_row = new_pos > 0
                 has_not_underflowed_column = current_pos % self.SIZE != 1
                 is_valid = (
                     has_not_underflowed_column
                     and has_not_underflowed_row
                     and move.vehicle_placement.orientation == Orientation.HORIZONTAL
+                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
             case Direction.RIGHT:
                 current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos + 1
+                new_coverage = self.calculate_vehicle_placement_squares(
+                    new_pos,
+                    move.vehicle_placement.car,
+                    move.vehicle_placement.orientation,
+                )
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
                 has_not_overflowed_column = current_pos % self.SIZE != 0
                 is_valid = (
                     has_not_overflowed_column
                     and has_not_overflowed_row
                     and move.vehicle_placement.orientation == Orientation.HORIZONTAL
+                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
         return (is_valid, new_pos)
 

@@ -109,14 +109,10 @@ def test_invalid_move_left_from_square_nine():
     assert new_placement.coverage == car_x_placement.coverage
 
 
-# TODO This should actually fail because car X is on position 9
-# I think we need another one car vertical game to test vertical movements
 def test_valid_move_down_from_square_six():
     g = three_car_game()
-    g.print_game()
     car_a_placement = g.get_vehicle_placement_for_car(car_a)
     is_valid, new_placement = g.move(Move(car_a_placement, direction=Direction.DOWN))
-    g.print_game()
     assert is_valid
     assert new_placement.coverage == [12, 18, 24]
 
@@ -133,6 +129,16 @@ def test_invalid_move_right_from_square_three():
     g = three_car_game()
     car_b_placement = g.get_vehicle_placement_for_car(car_b)
     is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.RIGHT))
+    assert not is_valid
+    assert new_placement.coverage == car_b_placement.coverage
+
+
+def test_vertical_collision():
+    g = three_car_game()
+    g.print_game()
+    car_b_placement = g.get_vehicle_placement_for_car(car_b)
+    is_valid, new_placement = g.move(Move(car_b_placement, direction=Direction.DOWN))
+    g.print_game()
     assert not is_valid
     assert new_placement.coverage == car_b_placement.coverage
 
