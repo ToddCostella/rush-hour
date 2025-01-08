@@ -143,7 +143,12 @@ def test_vertical_collision():
 
 def test_horizontal_collision():
     g = three_car_game()
-    g.print_game()
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    g.move(Move(car_x_placement, direction=Direction.RIGHT))
+    # Get the new placement for the car from the game as it has been replaced by the move.
+    # TODO: Maybe move should just take the car and derive the placement....
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    g.move(Move(car_x_placement, direction=Direction.RIGHT))
     car_x_placement = g.get_vehicle_placement_for_car(car_x)
     is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.RIGHT))
     assert not is_valid
