@@ -65,7 +65,6 @@ class Move:
 
 class Game:
     SIZE: int = 6
-    moves: list[Move]
 
     def __init__(self, puzzle_card: PuzzleCard) -> None:
         vehicle_placements = []
@@ -137,13 +136,11 @@ class Game:
             )
             new_placement.coverage = my_new_squares
 
-        self.update_vehicle_placement(move.vehicle_placement, new_placement)
+        # Update the list of vehicle_placements by removing the old placement and replacing it with the new placement
+        self.vehicle_placements.remove(move.vehicle_placement)
+        self.vehicle_placements.append(new_placement)
         self.moves.append(move)
         return is_valid_move, new_placement
-
-    def update_vehicle_placement(self, old: VehiclePlacement, new: VehiclePlacement):
-        self.vehicle_placements.remove(old)
-        self.vehicle_placements.append(new)
 
     def is_valid_move(self, move: Move) -> Tuple[bool, int]:
         is_valid = False
@@ -153,65 +150,46 @@ class Game:
             move.vehicle_placement.car.id
         )
 
+        current_pos = min(move.vehicle_placement.coverage)
         match move.direction:
             case Direction.UP:
-                current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos - self.SIZE
-                new_coverage = self.calculate_vehicle_placement_squares(
-                    new_pos,
-                    move.vehicle_placement.car,
-                    move.vehicle_placement.orientation,
-                )
                 is_valid = (
                     new_pos > 0
                     and move.vehicle_placement.orientation == Orientation.VERTICAL
-                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
             case Direction.DOWN:
-                current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos + self.SIZE
-                new_coverage = self.calculate_vehicle_placement_squares(
-                    new_pos,
-                    move.vehicle_placement.car,
-                    move.vehicle_placement.orientation,
-                )
                 is_valid = (
                     new_pos < (self.SIZE * self.SIZE)
                     and move.vehicle_placement.orientation == Orientation.VERTICAL
-                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
             case Direction.LEFT:
-                current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos - 1
-                new_coverage = self.calculate_vehicle_placement_squares(
-                    new_pos,
-                    move.vehicle_placement.car,
-                    move.vehicle_placement.orientation,
-                )
                 has_not_underflowed_row = new_pos > 0
                 has_not_underflowed_column = current_pos % self.SIZE != 1
                 is_valid = (
                     has_not_underflowed_column
                     and has_not_underflowed_row
                     and move.vehicle_placement.orientation == Orientation.HORIZONTAL
-                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
             case Direction.RIGHT:
-                current_pos = min(move.vehicle_placement.coverage)
                 new_pos = current_pos + 1
-                new_coverage = self.calculate_vehicle_placement_squares(
-                    new_pos,
-                    move.vehicle_placement.car,
-                    move.vehicle_placement.orientation,
-                )
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
                 has_not_overflowed_column = current_pos % self.SIZE != 0
                 is_valid = (
                     has_not_overflowed_column
                     and has_not_overflowed_row
                     and move.vehicle_placement.orientation == Orientation.HORIZONTAL
-                    and not any(item in other_vehicle_sqaures for item in new_coverage)
                 )
+        new_coverage = self.calculate_vehicle_placement_squares(
+            new_pos,
+            move.vehicle_placement.car,
+            move.vehicle_placement.orientation,
+        )
+        is_valid = is_valid and not any(
+            item in other_vehicle_sqaures for item in new_coverage
+        )
         return (is_valid, new_pos)
 
     def calculate_vehicle_placement_squares(
