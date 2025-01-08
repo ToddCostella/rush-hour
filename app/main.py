@@ -68,12 +68,14 @@ class Game:
 
     def __init__(self, puzzle_card: PuzzleCard) -> None:
         vehicle_placements = []
-        for pe in puzzle_card.setup:
+        for puzzle_entry in puzzle_card.setup:
             placment = VehiclePlacement(
-                pe.car,
-                pe.orientation,
+                puzzle_entry.car,
+                puzzle_entry.orientation,
                 self.calculate_vehicle_placement_squares(
-                    pe.starting_position, pe.car, pe.orientation
+                    puzzle_entry.starting_position,
+                    puzzle_entry.car,
+                    puzzle_entry.orientation,
                 ),
             )
             vehicle_placements.append(placment)
