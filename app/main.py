@@ -94,12 +94,10 @@ class Game:
         flattened_list = [item for sublist in coverage for item in sublist]
         return flattened_list
 
-    def calculate_vehicle_placement_coverage_for_others(
-        self, id: VehicleID
-    ) -> list[int]:
+    def calculate_vehicle_placement_coverage_for_others(self, car: Car) -> list[int]:
         coverage = []
         for p in self.vehicle_placements:
-            if p.car.id != id:
+            if p.car.id != car.id:
                 coverage.append(
                     self.calculate_vehicle_placement_squares(
                         p.coverage[0], car=p.car, orientation=p.orientation
@@ -151,7 +149,7 @@ class Game:
         new_pos = 0
 
         other_vehicle_sqaures = self.calculate_vehicle_placement_coverage_for_others(
-            move.car.id
+            move.car
         )
 
         placement = self.get_vehicle_placement_for_car(move.car)
