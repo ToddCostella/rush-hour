@@ -3,6 +3,7 @@ from icecream import ic
 from dataclasses import dataclass
 from typing import NewType, Tuple, List
 import copy
+from rich.console import Console
 
 
 class Direction(Enum):
@@ -13,14 +14,14 @@ class Direction(Enum):
 
 
 class Color(Enum):
-    BLUE = 1
-    GREEN = 2
-    RED = 3
-    PURPLE = 4
-    BROWN = 5
-    WHITE = 6
-    ORANGE = 7
-    YELLOW = 8
+    BLUE = "blue"
+    GREEN = "green"
+    RED = "red"
+    PURPLE = "purple"
+    BROWN = "brown"
+    WHITE = "white"
+    ORANGE = "orange"
+    YELLOW = "yellow"
 
 
 class Orientation(Enum):
@@ -192,7 +193,7 @@ class Game:
         is_valid = is_valid and not any(
             item in other_vehicle_sqaures for item in new_coverage
         )
-        return (is_valid, new_pos)
+        return is_valid, new_pos
 
     def calculate_vehicle_placement_squares(
         self, start_square: int, car: Car, orientation: Orientation
@@ -213,21 +214,24 @@ class Game:
 
     def print_game(self):
         # Geneate a dictionary in which the keys are the the number of the square occupied and the vlaue is the car occupying the square
+        console = Console()
         car_squares = {
             square: p.car for p in self.vehicle_placements for square in p.coverage
         }
-        print("")
+        console.print("")
         for row in range(0, self.SIZE):
             for column in range(1, self.SIZE + 1):
                 square = row * self.SIZE + column
                 # If the square is occupied, print the car id, otherwise print the number of the square
                 if square in car_squares:
                     car = car_squares[square]
-                    print(f"| {car.id} ", end="")
+                    console.print(
+                        f"|[{car.color.value}] {car.id} [/{car.color.value}]", end=""
+                    )
                 else:
-                    print(f"|{square:2} ", end="")
+                    console.print(f"[white]|{square:2} [/white]", end="")
                 if column % self.SIZE == 0:
-                    print("|")
+                    console.print("|")
 
 
 # if __name__ == "__main__":

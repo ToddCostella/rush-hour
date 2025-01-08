@@ -141,6 +141,15 @@ def test_vertical_collision():
     assert new_placement.coverage == car_b_placement.coverage
 
 
+def test_horizontal_collision():
+    g = three_car_game()
+    g.print_game()
+    car_x_placement = g.get_vehicle_placement_for_car(car_x)
+    is_valid, new_placement = g.move(Move(car_x_placement, direction=Direction.RIGHT))
+    assert not is_valid
+    assert new_placement.coverage == car_x_placement.coverage
+
+
 # def test_all_directions_from_square_nine():
 #    g = Game(vehicle_placements=[])
 #    assert g.move_up(9) == 3
