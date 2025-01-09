@@ -219,11 +219,14 @@ class Game:
         for row in range(0, self.SIZE):
             for column in range(1, self.SIZE + 1):
                 square = row * self.SIZE + column
-                # If the square is occupied, print the car id, otherwise print the number of the square
+                # If the square is occupied, print the car id in it's color, otherwise print the number of the square in white
                 if square in car_squares:
                     car = car_squares[square]
+                    # Constructs a string of [color]id[/color], which is how the console library renders colored text
+                    # "[blue]A[/blue] for example"
                     console.print(
-                        f"|[{car.color.value}] {car.id} [/{car.color.value}]", end=""
+                        f"|[{car.color.value}] {car.id} [/{car.color.value}]",
+                        end="",
                     )
                 else:
                     console.print(f"[white]|{square:2} [/white]", end="")
