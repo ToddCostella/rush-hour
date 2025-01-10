@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "debugpy>=1.8.11",
+    "getch>=1.0",
     "icecream>=2.1.3",
     "pytest>=8.3.4",
     "python-dotenv>=1.0.1",
