@@ -1,9 +1,11 @@
 from enum import Enum
-from icecream import ic
 from dataclasses import dataclass
 from typing import NewType, Tuple, List
 import copy
 from rich.console import Console
+from getch import getch
+from rich.table import Table
+from rich.live import Live
 
 
 class Direction(Enum):
@@ -82,6 +84,7 @@ class Game:
             vehicle_placements.append(placment)
         self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
         self.moves = []
+        self.console = Console()
 
     def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
         coverage = []
@@ -211,11 +214,10 @@ class Game:
 
     def print_game(self):
         # Geneate a dictionary in which the keys are the the number of the square occupied and the vlaue is the car occupying the square
-        console = Console()
         car_squares = {
             square: p.car for p in self.vehicle_placements for square in p.coverage
         }
-        console.print("")
+        self.console.print("")
         for row in range(0, self.SIZE):
             for column in range(1, self.SIZE + 1):
                 square = row * self.SIZE + column
@@ -224,15 +226,82 @@ class Game:
                     car = car_squares[square]
                     # Constructs a string of [color]id[/color], which is how the console library renders colored text
                     # "[blue]A[/blue] for example"
-                    console.print(
-                        f"|[{car.color.value}] {car.id} [/{car.color.value}]",
+                    self.console.print(
+                        f"|[black on {car.color.value}] {car.id} [/]",
                         end="",
                     )
                 else:
-                    console.print(f"[white]|{square:2} [/white]", end="")
+                    self.console.print(f"[white]|{square:2} [/white]", end="")
                 if column % self.SIZE == 0:
-                    console.print("|")
+                    self.console.print("|")
+
+    def positions_as_rich_table(self) -> Table:
+        car_squares = {
+            square: p.car for p in self.vehicle_placements for square in p.coverage
+        }
+        table = Table(show_header=False, show_lines=False)
+        for _ in range(1, self.SIZE):
+            table.add_column()
+
+        for row in range(0, self.SIZE):
+            row_text: list[str] = []
+            for column in range(1, self.SIZE + 1):
+                square = row * self.SIZE + column
+                contents = ""
+                if square in car_squares:
+                    car = car_squares[square]
+                    contents = f"[black on {car.color.value}] {car.id} [/]"
+                else:
+                    contents = "   "
+                    # contents = f"[white]{square:2} [/]"
+
+                row_text.append(contents)
+
+            table.add_row(*row_text)
+        return table
 
 
-# if __name__ == "__main__":
-#    g = Game()
+if __name__ == "__main__":
+    car_x = Car(id=VehicleID("X"), color=Color.RED, length=2)
+    car_a = Car(id=VehicleID("A"), color=Color.BLUE, length=3)
+    car_b = Car(id=VehicleID("B"), color=Color.GREEN, length=2)
+
+    car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 14)
+    car_a_entry = PuzzleEntry(car_a, Orientation.VERTICAL, 6)
+    car_b_entry = PuzzleEntry(car_b, Orientation.VERTICAL, 3)
+    puzzle_card = PuzzleCard([car_x_entry, car_a_entry, car_b_entry])
+
+    g = Game(puzzle_card)
+    with Live(g.positions_as_rich_table(), screen=True, auto_refresh=False) as live:
+        direction = Direction.DOWN
+        car = car_a
+
+        while True:
+            key = getch()
+            move = False
+            match key:
+                case "a":
+                    car = car_a
+                case "b":
+                    car = car_b
+                case "x":
+                    car = car_x
+                case "j":
+                    direction = Direction.DOWN
+                    move = True
+                case "k":
+                    direction = Direction.UP
+                    move = True
+                case "h":
+                    direction = Direction.LEFT
+                    move = True
+                case "l":
+                    direction = Direction.RIGHT
+                    move = True
+                case "q":
+                    break
+            if move:
+                is_valid_move, _ = g.move(Move(car=car, direction=direction))
+                live.update(g.positions_as_rich_table(), refresh=True)
+                if not is_valid_move:
+                    print("\a")
