@@ -180,7 +180,7 @@ class Game:
             case Direction.RIGHT:
                 new_pos = head_pos + 1
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
-                has_not_overflowed_column = max(placement.coverage) % self.SIZE != 0
+                has_not_overflowed_column = tail_pos % self.SIZE != 0
                 is_valid = (
                     has_not_overflowed_column
                     and has_not_overflowed_row
