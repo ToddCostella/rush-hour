@@ -1,8 +1,8 @@
 
 # To do List
 
-- move direction determines head square.
-  - starting pos is min of coverage squares on up/left,max on down/right
-- use head/tail of list to derive staring point of the move
-- [bug] Overflow calculation for right and down is off by one
-  - not sure why tests don't cover that
+Add special check for car x to exit out outside of board and solve puzzle when right on square 18
+Add a few puzzles to play
+Add a way to start game with a specific puzzle
+Genericise The main puzzle loop
+Render puzzle cards on game startup to allow user to pick a game
