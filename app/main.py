@@ -84,6 +84,7 @@ class Game:
             vehicle_placements.append(placment)
         self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
         self.moves = []
+        self.puzzle_solved = False
         self.console = Console()
 
     def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
@@ -194,6 +195,16 @@ class Game:
         is_valid = is_valid and not any(
             item in other_vehicle_sqaures for item in new_coverage
         )
+        # The one exception to all these rules is that Car X (The players RED car) can exit the board from position 18 to solve the puzzle
+        if (
+            move.car.id == VehicleID("X")
+            and move.direction == Direction.RIGHT
+            and tail_pos == 18
+        ):
+            self.puzzle_solved = True
+            is_valid = True
+            new_pos = 99  # Not really valid but we need to some value to indicate off the board
+
         return is_valid, new_pos
 
     def calculate_vehicle_placement_squares(

@@ -47,6 +47,18 @@ def three_car_game() -> Game:
     return Game(puzzle_card=puzzle_card)
 
 
+def red_car_exit_game() -> Game:
+    car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 17)
+    puzzle_card = PuzzleCard([car_x_entry])
+    return Game(puzzle_card=puzzle_card)
+
+
+def green_car_exit_game() -> Game:
+    car_b_entry = PuzzleEntry(car_b, Orientation.HORIZONTAL, 17)
+    puzzle_card = PuzzleCard([car_b_entry])
+    return Game(puzzle_card=puzzle_card)
+
+
 def test_valid_move_right_from_square_nine():
     g = one_car_game_horizontal()
     is_valid, new_placement = g.move(Move(car_x, direction=Direction.RIGHT))
@@ -185,3 +197,19 @@ def test_red_car_coverage():
     assert g
     covered_squares = sorted(g.get_my_squares_from_board(car_x))
     assert [14, 15] == covered_squares
+
+
+def test_red_car_can_exit():
+    g = red_car_exit_game()
+    assert not g.puzzle_solved
+    is_valid, _ = g.move(Move(car_x, direction=Direction.RIGHT))
+    assert is_valid
+    assert g.puzzle_solved
+
+
+def test_green_car_can_not_exit():
+    g = green_car_exit_game()
+    assert not g.puzzle_solved
+    is_valid, _ = g.move(Move(car_b, direction=Direction.RIGHT))
+    assert not is_valid
+    assert not g.puzzle_solved
