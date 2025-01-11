@@ -68,6 +68,7 @@ class Move:
 
 class Game:
     SIZE: int = 6
+    EXIT_SQUARE: int = 18
 
     def __init__(self, puzzle_card: PuzzleCard) -> None:
         vehicle_placements = []
@@ -264,8 +265,12 @@ class Game:
                     car = car_squares[square]
                     contents = f"[black on {car.color.value}] {car.id} [/]"
                 else:
-                    # contents = "   "
-                    contents = f"[white]{square:2} [/]"
+                    contents = "   "
+                    # contents = f"[white]{square:2} [/]"
+
+                # Add a visual indicator where the exit square is on the board
+                if square == self.EXIT_SQUARE:
+                    contents = contents + "[yellow]|[/]"
 
                 row_text.append(contents)
 
@@ -314,6 +319,9 @@ if __name__ == "__main__":
                     break
             if move:
                 is_valid_move, _ = g.move(Move(car=car, direction=direction))
+                if g.puzzle_solved:
+                    break
+
                 live.update(g.positions_as_rich_table(), refresh=True)
                 if not is_valid_move:
                     print("\a")
