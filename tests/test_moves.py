@@ -11,7 +11,9 @@ from app.main import (
     PuzzleEntry,
     PuzzleCard,
 )
+from rich.console import Console
 
+console = Console()
 car_x = Car(id=VehicleID("X"), color=Color.RED, length=2)
 car_a = Car(id=VehicleID("A"), color=Color.BLUE, length=3)
 car_b = Car(id=VehicleID("B"), color=Color.GREEN, length=2)
@@ -126,6 +128,22 @@ def test_invalid_move_right_from_square_three():
     is_valid, new_placement = g.move(Move(car_b, direction=Direction.RIGHT))
     assert not is_valid
     assert new_placement.coverage == car_b_placement.coverage
+
+
+def test_invalid_move_down_from_square_twenty_seven():
+    g = one_car_game_vertical()
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.DOWN))
+    assert is_valid
+    assert new_placement.coverage[0] == 15
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.DOWN))
+    assert is_valid
+    assert new_placement.coverage[0] == 21
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.DOWN))
+    assert is_valid
+    assert new_placement.coverage[0] == 27
+    is_valid, new_placement = g.move(Move(car_x, direction=Direction.DOWN))
+    assert not is_valid
+    assert new_placement.coverage[0] == 27
 
 
 def test_vertical_collision():

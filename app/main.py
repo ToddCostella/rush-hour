@@ -156,30 +156,31 @@ class Game:
         )
 
         placement = self.get_vehicle_placement_for_car(move.car)
-        current_pos = min(placement.coverage)
+        head_pos = min(placement.coverage)
+        tail_pos = max(placement.coverage)
         match move.direction:
             case Direction.UP:
-                new_pos = current_pos - self.SIZE
+                new_pos = head_pos - self.SIZE
                 is_valid = new_pos > 0 and placement.orientation == Orientation.VERTICAL
             case Direction.DOWN:
-                new_pos = current_pos + self.SIZE
+                new_pos = head_pos + self.SIZE
                 is_valid = (
-                    new_pos < (self.SIZE * self.SIZE)
+                    tail_pos + self.SIZE <= (self.SIZE * self.SIZE)
                     and placement.orientation == Orientation.VERTICAL
                 )
             case Direction.LEFT:
-                new_pos = current_pos - 1
+                new_pos = head_pos - 1
                 has_not_underflowed_row = new_pos > 0
-                has_not_underflowed_column = current_pos % self.SIZE != 1
+                has_not_underflowed_column = head_pos % self.SIZE != 1
                 is_valid = (
                     has_not_underflowed_column
                     and has_not_underflowed_row
                     and placement.orientation == Orientation.HORIZONTAL
                 )
             case Direction.RIGHT:
-                new_pos = current_pos + 1
+                new_pos = head_pos + 1
                 has_not_overflowed_row = new_pos < (self.SIZE * self.SIZE)
-                has_not_overflowed_column = current_pos % self.SIZE != 0
+                has_not_overflowed_column = max(placement.coverage) % self.SIZE != 0
                 is_valid = (
                     has_not_overflowed_column
                     and has_not_overflowed_row
@@ -252,8 +253,8 @@ class Game:
                     car = car_squares[square]
                     contents = f"[black on {car.color.value}] {car.id} [/]"
                 else:
-                    contents = "   "
-                    # contents = f"[white]{square:2} [/]"
+                    # contents = "   "
+                    contents = f"[white]{square:2} [/]"
 
                 row_text.append(contents)
 
