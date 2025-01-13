@@ -83,6 +83,8 @@ class Game:
                 ),
             )
             vehicle_placements.append(placment)
+        # TODO: Check that we have one RED vehicle and that we don't have any vehicle ids that would collide with the hjkl navigation keys
+
         self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
         self.moves = []
         self.puzzle_solved = False
@@ -143,10 +145,10 @@ class Game:
             )
             new_placement.coverage = my_new_squares
 
-        # Update the list of vehicle_placements by removing the old placement and replacing it with the new placement
-        self.vehicle_placements.remove(placement)
-        self.vehicle_placements.append(new_placement)
-        self.moves.append(move)
+            self.moves.append(move)
+            # Update the list of vehicle_placements by removing the old placement and replacing it with the new placement
+            self.vehicle_placements.remove(placement)
+            self.vehicle_placements.append(new_placement)
         return is_valid_move, new_placement
 
     def is_valid_move(self, move: Move) -> Tuple[bool, int]:
@@ -248,13 +250,16 @@ class Game:
                 if column % self.SIZE == 0:
                     self.console.print("|")
 
-    def positions_as_rich_table(self) -> Table:
+    def positions_as_rich_table(self, selected_car) -> Table:
         car_squares = {
             square: p.car for p in self.vehicle_placements for square in p.coverage
         }
         table = Table(show_header=False, show_lines=False)
         for _ in range(1, self.SIZE):
             table.add_column()
+
+        grid = Table.grid(expand=True)
+        grid.add_column()
 
         for row in range(0, self.SIZE):
             row_text: list[str] = []
@@ -275,7 +280,16 @@ class Game:
                 row_text.append(contents)
 
             table.add_row(*row_text)
-        return table
+        grid.add_row(table)
+        status_row = (
+            "Car:None"
+            if selected_car is None
+            else f"[black on {selected_car.color.value}] Car:{selected_car.id}[/]"
+        )
+
+        status_row = status_row + f"  Moves:{len(self.moves)}"
+        grid.add_row(status_row)
+        return grid
 
 
 if __name__ == "__main__":
@@ -289,39 +303,35 @@ if __name__ == "__main__":
     puzzle_card = PuzzleCard([car_x_entry, car_a_entry, car_b_entry])
 
     g = Game(puzzle_card)
-    with Live(g.positions_as_rich_table(), screen=True, auto_refresh=False) as live:
+    car = None
+    move_dict = {
+        "h": Direction.LEFT,
+        "j": Direction.DOWN,
+        "k": Direction.UP,
+        "l": Direction.RIGHT,
+    }
+    car_dict = {p.car.id.lower(): p.car for p in g.vehicle_placements}
+    with Live(
+        g.positions_as_rich_table(selected_car=car), screen=True, auto_refresh=False
+    ) as live:
         direction = Direction.DOWN
-        car = car_a
+        car = None
 
         while True:
             key = getch()
             move = False
-            match key:
-                case "a":
-                    car = car_a
-                case "b":
-                    car = car_b
-                case "x":
-                    car = car_x
-                case "j":
-                    direction = Direction.DOWN
-                    move = True
-                case "k":
-                    direction = Direction.UP
-                    move = True
-                case "h":
-                    direction = Direction.LEFT
-                    move = True
-                case "l":
-                    direction = Direction.RIGHT
-                    move = True
-                case "q":
-                    break
-            if move:
+            if key in car_dict.keys():
+                car = car_dict[key]
+            if key in move_dict.keys():
+                move = True
+                direction = move_dict[key]
+            if key == "q":
+                break
+            if move and car:
                 is_valid_move, _ = g.move(Move(car=car, direction=direction))
                 if g.puzzle_solved:
                     break
 
-                live.update(g.positions_as_rich_table(), refresh=True)
+                live.update(g.positions_as_rich_table(selected_car=car), refresh=True)
                 if not is_valid_move:
-                    print("\a")
+                    g.console.bell()
