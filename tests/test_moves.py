@@ -2,7 +2,6 @@
 from app.main import (
     Direction,
     Car,
-    VehiclePlacement,
     Color,
     Orientation,
     Game,
@@ -10,8 +9,10 @@ from app.main import (
     Move,
     PuzzleEntry,
     PuzzleCard,
+    build_puzzle_card_from_definition,
 )
 from rich.console import Console
+
 
 console = Console()
 car_x = Car(id=VehicleID("X"), color=Color.RED, length=2)
@@ -213,3 +214,13 @@ def test_green_car_can_not_exit():
     is_valid, _ = g.move(Move(car_b, direction=Direction.RIGHT))
     assert not is_valid
     assert not g.puzzle_solved
+
+
+def test_parse_card_one_puzzle():
+
+    input_string = "XR2H14,AG2H01,BO2V25,CB2H29,PP3V07,QB3V10,OY3V06,RG3H33"
+    card = build_puzzle_card_from_definition(input_string)
+    assert card
+    assert len(card.setup) == 8
+    g = Game(card)
+    assert len(g.vehicle_placements) == 8

@@ -22,8 +22,9 @@ class Color(Enum):
     PURPLE = "purple"
     BROWN = "brown"
     WHITE = "white"
-    ORANGE = "orange"
+    ORANGE = "dark_orange"
     YELLOW = "yellow"
+    CYAN = "cyan"
 
 
 class Orientation(Enum):
@@ -270,8 +271,8 @@ class Game:
                     car = car_squares[square]
                     contents = f"[black on {car.color.value}] {car.id} [/]"
                 else:
-                    contents = "   "
-                    # contents = f"[white]{square:2} [/]"
+                    # contents = "   "
+                    contents = f"[white]{square:2} [/]"
 
                 # Add a visual indicator where the exit square is on the board
                 if square == self.EXIT_SQUARE:
@@ -287,21 +288,57 @@ class Game:
             else f"[black on {selected_car.color.value}] Car:{selected_car.id}[/]"
         )
 
+        # TODO: Add a colspan here and set the moves lavel to be right justified
         status_row = status_row + f"  Moves:{len(self.moves)}"
         grid.add_row(status_row)
         return grid
 
 
+def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
+    tokens = definition.split(",")
+    color_dict = {
+        "R": Color.RED,
+        "O": Color.ORANGE,
+        "B": Color.BLUE,
+        "P": Color.PURPLE,
+        "G": Color.GREEN,
+        "Y": Color.YELLOW,
+        "C": Color.CYAN,
+    }
+    puzzle_entries: list[PuzzleEntry] = []
+    for token in tokens:
+        car_id_token = token[0]
+        color_token = token[1]
+        lenth_token = token[2]
+        orientation_token = token[3]
+        starting_position_token = token[4] + token[5]
+
+        assert len(car_id_token) == 1
+        assert color_token in color_dict.keys()
+        assert lenth_token in ["2", "3"]
+        assert orientation_token in ["H", "V"]
+        car_id = VehicleID(car_id_token)
+        car_color = color_dict[color_token]
+        car_length = int(lenth_token)
+
+        car_orientation = {"H": Orientation.HORIZONTAL, "V": Orientation.VERTICAL}[
+            orientation_token
+        ]
+        starting_position = int(starting_position_token)
+        assert starting_position > 0 and starting_position < 37
+        car = Car(id=car_id, color=car_color, length=car_length)
+        puzzle_entry = PuzzleEntry(
+            car=car, orientation=car_orientation, starting_position=starting_position
+        )
+
+        puzzle_entries.append(puzzle_entry)
+
+    return PuzzleCard(puzzle_entries)
+
+
 if __name__ == "__main__":
-    car_x = Car(id=VehicleID("X"), color=Color.RED, length=2)
-    car_a = Car(id=VehicleID("A"), color=Color.BLUE, length=3)
-    car_b = Car(id=VehicleID("B"), color=Color.GREEN, length=2)
-
-    car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 14)
-    car_a_entry = PuzzleEntry(car_a, Orientation.VERTICAL, 6)
-    car_b_entry = PuzzleEntry(car_b, Orientation.VERTICAL, 3)
-    puzzle_card = PuzzleCard([car_x_entry, car_a_entry, car_b_entry])
-
+    input_string = "XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"
+    puzzle_card = build_puzzle_card_from_definition(input_string)
     g = Game(puzzle_card)
     car = None
     move_dict = {
