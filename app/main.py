@@ -28,8 +28,8 @@ class Color(Enum):
 
 
 class Orientation(Enum):
-    HORIZONTAL = 1
-    VERTICAL = 2
+    HORIZONTAL = "H"
+    VERTICAL = "V"
 
 
 VehicleID = NewType("VehicleID", str)
@@ -271,8 +271,8 @@ class Game:
                     car = car_squares[square]
                     contents = f"[black on {car.color.value}] {car.id} [/]"
                 else:
-                    # contents = "   "
-                    contents = f"[white]{square:2} [/]"
+                    contents = "   "
+                    # contents = f"[white]{square:2} [/]"
 
                 # Add a visual indicator where the exit square is on the board
                 if square == self.EXIT_SQUARE:
@@ -321,9 +321,7 @@ def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
         car_color = color_dict[color_token]
         car_length = int(lenth_token)
 
-        car_orientation = {"H": Orientation.HORIZONTAL, "V": Orientation.VERTICAL}[
-            orientation_token
-        ]
+        car_orientation = {o.value: o for o in Orientation}[orientation_token]
         starting_position = int(starting_position_token)
         assert starting_position > 0 and starting_position < 37
         car = Car(id=car_id, color=car_color, length=car_length)
@@ -337,8 +335,13 @@ def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
 
 
 if __name__ == "__main__":
-    input_string = "XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"
-    puzzle_card = build_puzzle_card_from_definition(input_string)
+    puzzle_one = "XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"
+    puzzle_two = (
+        "XR2H13,AG2V01,BY3H04,CC2V10,DP3V12,EB2V17,FO2H29,GG2H31,MC2V27,NB2H34,OB3H19"
+    )
+    puzzle_three = "XR2H14,AG2H20,BY3V16,CC3V24,EB2H33,FO2V26"
+    puzzle_four = "XR2H14,AY3V01,BP3V04,CG2V21,EB3H22,FO2V30,GY3H33"
+    puzzle_card = build_puzzle_card_from_definition(puzzle_one)
     g = Game(puzzle_card)
     car = None
     move_dict = {
@@ -372,3 +375,5 @@ if __name__ == "__main__":
                 live.update(g.positions_as_rich_table(selected_car=car), refresh=True)
                 if not is_valid_move:
                     g.console.bell()
+    game_moves = [{m.car.id: m.direction.name} for m in g.moves]
+    g.console.print(game_moves)
