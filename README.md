@@ -28,10 +28,8 @@ I created this project primarily to see what the experience of writing some amou
   One of the dependencies (getch) requires that gcc be installed.
 
    ```bash
-
-  apt install gcc
-
-  ```
+    apt install gcc
+    ```
 
 Use `uv` to create a project environment and run the project. Navigate to your project directory and execute:
 
