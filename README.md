@@ -4,6 +4,10 @@
 
 Rush Hour is a fun and engaging logic puzzle game where players maneuver their cars to help the red car (Car X) escape the congested parking lot grid. The objective is to move other cars out of the way and navigate the red car to the exit square in as few moves as possible.
 
+## Background
+
+I created this project primarily to see what the experience of writing some amount of code in NeoVim. The game itself is mildly interesting, just from a how would I implement an console based game in Python.
+
 ### Features
 
 - **Interactive Game**: Use keyboard commands to move the cars around the grid.
@@ -14,15 +18,22 @@ Rush Hour is a fun and engaging logic puzzle game where players maneuver their c
 
 ## Installation
 
-1. Ensure you have [Python 3.13 or later](https://www.python.org/downloads/) installed on your machine.
-
-2. Install `uv` (Universal Virtualenv) from the terminal using the following command:
+1. Install `uv` (Universal Virtualenv) from the terminal using the following command:
 
    ```bash
-   pip install uv
+   curl -LsSf <https://astral.sh/uv/install.sh> | sh
    ```
 
-3. Use `uv` to create a project environment and run the project. Navigate to your project directory and execute:
+2. Install gcc:
+  One of the dependencies (getch) requires that gcc be installed.
+
+   ```bash
+
+  apt install gcc
+
+  ```
+
+Use `uv` to create a project environment and run the project. Navigate to your project directory and execute:
 
    ```bash
    uv run app/main.py
@@ -49,15 +60,6 @@ uv run app/main.py
 - **Select Car**: Press the key corresponding to the car's ID (e.g., `x`, `a`, `b` for Cars X, A, B respectively) to select it before moving.
 - `q`: Quit the game.
 
-### Example Puzzle Definitions
-
-The following strings represent different puzzles you can play:
-
-- Puzzle 1: `"XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"`
-- Puzzle 2: `"XR2H13,AG2V01,BY3H04,CC2V10,DP3V12,EB2V17,FO2H29,GG2H31,MC2V27,NB2H34,OB3H19"`
-
-You can modify the `puzzle_one` variable in the `app/main.py` file to start with any of these puzzles.
-
 ## Testing
 
 The project comes with unit tests to validate the functionality of the game logic. To run the tests, execute:
@@ -65,17 +67,6 @@ The project comes with unit tests to validate the functionality of the game logi
 ```bash
 uv run -m pytest
 ```
-
-## Future Improvements
-
-- Add more pre-defined puzzles to play.
-- Enable users to select specific puzzles to start the game.
-- Improve the main puzzle loop to be more generic.
-- Add additional visual aids or instructions within the game.
-
-## Contributing
-
-Contributions are welcome! If you have suggestions or improvements, feel free to submit a pull request or open an issue.
 
 ### License
 
