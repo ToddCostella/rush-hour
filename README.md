@@ -37,14 +37,6 @@ Below is an animated demonstration of the game to give you a visual sense of how
     apt install gcc
     ```
 
-Use `uv` to create a project environment and run the project. Navigate to your project directory and execute:
-
-   ```bash
-   uv run app/main.py
-   ```
-
-   This command will handle the environment setup and install all necessary dependencies automatically. `uv` creates an isolated environment specific to this project.
-
 ## Usage
 
 To start playing the game, you can execute:
@@ -79,3 +71,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 Enjoy playing Rush Hour! May you guide Car X to victory! 🚗💨
+
