@@ -196,24 +196,24 @@ def test_other_car_coverage():
 def test_red_car_coverage():
     g = three_car_game()
     assert g
-    covered_squares = sorted(g.get_my_squares_from_board(car_x))
+    covered_squares = sorted(g.get_vehicle_placement_for_car(car_x).coverage)
     assert [14, 15] == covered_squares
 
 
 def test_red_car_can_exit():
     g = red_car_exit_game()
-    assert not g.puzzle_solved
+    assert not g.is_puzzle_solved
     is_valid, _ = g.move(Move(car_x, direction=Direction.RIGHT))
     assert is_valid
-    assert g.puzzle_solved
+    assert g.is_puzzle_solved
 
 
 def test_green_car_can_not_exit():
     g = green_car_exit_game()
-    assert not g.puzzle_solved
+    assert not g.is_puzzle_solved
     is_valid, _ = g.move(Move(car_b, direction=Direction.RIGHT))
     assert not is_valid
-    assert not g.puzzle_solved
+    assert not g.is_puzzle_solved
 
 
 def test_parse_card_one_puzzle():
@@ -221,6 +221,6 @@ def test_parse_card_one_puzzle():
     input_string = "XR2H14,AG2H01,BO2V25,CB2H29,PP3V07,QB3V10,OY3V06,RG3H33"
     card = build_puzzle_card_from_definition(input_string)
     assert card
-    assert len(card.setup) == 8
+    assert len(card.puzzle_entries) == 8
     g = Game(card)
     assert len(g.vehicle_placements) == 8

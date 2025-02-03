@@ -51,7 +51,7 @@ class PuzzleEntry:
 
 @dataclass
 class PuzzleCard:
-    setup: List[PuzzleEntry]
+    puzzle_entries: List[PuzzleEntry]
 
 
 @dataclass
@@ -73,14 +73,12 @@ class Game:
 
     def __init__(self, puzzle_card: PuzzleCard) -> None:
         vehicle_placements = []
-        for puzzle_entry in puzzle_card.setup:
+        for puzzle_entry in puzzle_card.puzzle_entries:
             placment = VehiclePlacement(
-                puzzle_entry.car,
-                puzzle_entry.orientation,
-                self.calculate_vehicle_placement_squares(
-                    puzzle_entry.starting_position,
-                    puzzle_entry.car,
-                    puzzle_entry.orientation,
+                car=puzzle_entry.car,
+                orientation=puzzle_entry.orientation,
+                coverage=self.calculate_coverage_squares_from_puzzle_entry(
+                    puzzle_entry=puzzle_entry
                 ),
             )
             vehicle_placements.append(placment)
@@ -88,31 +86,28 @@ class Game:
 
         self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
         self.moves = []
-        self.puzzle_solved = False
+        self.is_puzzle_solved = False
         self.console = Console()
 
-    def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
-        coverage = []
-        for p in self.vehicle_placements:
-            coverage.append(
-                self.calculate_vehicle_placement_squares(
-                    p.coverage[0], car=p.car, orientation=p.orientation
-                )
+    def calculate_vehicle_placement_coverage(
+        self, exclude_car: Car | None = None
+    ) -> list[int]:
+        return sorted(
+            square
+            for placement in self.vehicle_placements
+            if exclude_car is None or placement.car.id != exclude_car.id
+            for square in self.calculate_coverage_squares(
+                placement.coverage[0],
+                car=placement.car,
+                orientation=placement.orientation,
             )
-        flattened_list = [item for sublist in coverage for item in sublist]
-        return flattened_list
+        )
+
+    def calculate_vehicle_placement_coverage_for_all(self) -> list[int]:
+        return self.calculate_vehicle_placement_coverage()
 
     def calculate_vehicle_placement_coverage_for_others(self, car: Car) -> list[int]:
-        coverage = []
-        for p in self.vehicle_placements:
-            if p.car.id != car.id:
-                coverage.append(
-                    self.calculate_vehicle_placement_squares(
-                        p.coverage[0], car=p.car, orientation=p.orientation
-                    )
-                )
-        flattened_list = sorted([item for sublist in coverage for item in sublist])
-        return flattened_list
+        return self.calculate_vehicle_placement_coverage(exclude_car=car)
 
     def get_vehicle_placement_for_car(self, car: Car) -> VehiclePlacement:
         match = [
@@ -122,24 +117,12 @@ class Game:
         ]
         return match[0]
 
-    def get_my_squares_from_board(self, car: Car) -> list[int]:
-        placement = self.get_vehicle_placement_for_car(car)
-        my_squares = []
-        if placement is not None:
-            my_squares = self.calculate_vehicle_placement_squares(
-                start_square=placement.coverage[0],
-                car=placement.car,
-                orientation=placement.orientation,
-            )
-
-        return my_squares
-
     def move(self, move: Move) -> Tuple[bool, VehiclePlacement]:
         placement = self.get_vehicle_placement_for_car(move.car)
         new_placement = copy.copy(placement)
         (is_valid_move, new_pos) = self.is_valid_move(move)
         if is_valid_move:
-            my_new_squares = self.calculate_vehicle_placement_squares(
+            my_new_squares = self.calculate_coverage_squares(
                 start_square=new_pos,
                 car=new_placement.car,
                 orientation=new_placement.orientation,
@@ -191,7 +174,7 @@ class Game:
                     and has_not_overflowed_row
                     and placement.orientation == Orientation.HORIZONTAL
                 )
-        new_coverage = self.calculate_vehicle_placement_squares(
+        new_coverage = self.calculate_coverage_squares(
             new_pos,
             move.car,
             placement.orientation,
@@ -205,13 +188,23 @@ class Game:
             and move.direction == Direction.RIGHT
             and tail_pos == 18
         ):
-            self.puzzle_solved = True
+            self.is_puzzle_solved = True
             is_valid = True
             new_pos = 99  # Not really valid but we need to some value to indicate off the board
 
         return is_valid, new_pos
 
-    def calculate_vehicle_placement_squares(
+    def calculate_coverage_squares_from_puzzle_entry(
+        self, puzzle_entry: PuzzleEntry
+    ) -> list[int]:
+
+        return self.calculate_coverage_squares(
+            start_square=puzzle_entry.starting_position,
+            car=puzzle_entry.car,
+            orientation=puzzle_entry.orientation,
+        )
+
+    def calculate_coverage_squares(
         self, start_square: int, car: Car, orientation: Orientation
     ) -> list[int]:
         squares = []
@@ -227,29 +220,6 @@ class Game:
             for placement in range(0, car.length):
                 squares.append(start_square + (placement * self.SIZE))
         return squares
-
-    def print_game(self):
-        # Geneate a dictionary in which the keys are the the number of the square occupied and the vlaue is the car occupying the square
-        car_squares = {
-            square: p.car for p in self.vehicle_placements for square in p.coverage
-        }
-        self.console.print("")
-        for row in range(0, self.SIZE):
-            for column in range(1, self.SIZE + 1):
-                square = row * self.SIZE + column
-                # If the square is occupied, print the car id in it's color, otherwise print the number of the square in white
-                if square in car_squares:
-                    car = car_squares[square]
-                    # Constructs a string of [color]id[/color], which is how the console library renders colored text
-                    # "[blue]A[/blue] for example"
-                    self.console.print(
-                        f"|[black on {car.color.value}] {car.id} [/]",
-                        end="",
-                    )
-                else:
-                    self.console.print(f"[white]|{square:2} [/white]", end="")
-                if column % self.SIZE == 0:
-                    self.console.print("|")
 
     def positions_as_rich_table(self, selected_car) -> Table:
         car_squares = {
@@ -335,6 +305,7 @@ def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
 
 
 if __name__ == "__main__":
+    # TODO: These puzzles need to be pulled out into a puzzle deck or puzzle library
     puzzle_one = "XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"
     puzzle_two = (
         "XR2H13,AG2V01,BY3H04,CC2V10,DP3V12,EB2V17,FO2H29,GG2H31,MC2V27,NB2H34,OB3H19"
@@ -352,7 +323,7 @@ if __name__ == "__main__":
     }
     car_dict = {p.car.id.lower(): p.car for p in g.vehicle_placements}
     with Live(
-        g.positions_as_rich_table(selected_car=car), screen=True, auto_refresh=False
+        g.positions_as_rich_table(selected_car=car), screen=False, auto_refresh=False
     ) as live:
         direction = Direction.DOWN
         car = None
@@ -369,7 +340,7 @@ if __name__ == "__main__":
                 break
             if move and car:
                 is_valid_move, _ = g.move(Move(car=car, direction=direction))
-                if g.puzzle_solved:
+                if g.is_puzzle_solved:
                     break
 
                 live.update(g.positions_as_rich_table(selected_car=car), refresh=True)
