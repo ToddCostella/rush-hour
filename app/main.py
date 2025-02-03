@@ -89,7 +89,9 @@ class Game:
         self.is_puzzle_solved = False
         self.console = Console()
 
-    def validate_vehicle_placements(self, vehicle_placements: List[VehiclePlacement]) -> None:
+    def validate_vehicle_placements(
+        self, vehicle_placements: List[VehiclePlacement]
+    ) -> None:
         # Ensure there's at least one red vehicle
         red_cars = [v for v in vehicle_placements if v.car.color == Color.RED]
         if not red_cars:
@@ -98,7 +100,9 @@ class Game:
         restricted_ids = {"h", "j", "k", "l"}
         for placement in vehicle_placements:
             if placement.car.id.lower() in restricted_ids:
-                raise ValueError(f"Vehicle ID '{placement.car.id}' conflicts with movement keys.")
+                raise ValueError(
+                    f"Vehicle ID '{placement.car.id}' conflicts with movement keys."
+                )
 
     def calculate_vehicle_placement_coverage(
         self, exclude_car: Car | None = None
@@ -315,8 +319,14 @@ def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
 
 
 if __name__ == "__main__":
+    # TODO: These puzzles need to be pulled out into a puzzle deck or puzzle library
     puzzle_one = "XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"
-    puzzle_card = build_puzzle_card_from_definition(puzzle_one)
+    puzzle_two = (
+        "XR2H13,AG2V01,BY3H04,CC2V10,DP3V12,EB2V17,FO2H29,GG2H31,MC2V27,NB2H34,OB3H19"
+    )
+    puzzle_three = "XR2H14,AG2H20,BY3V16,CC3V24,EB2H33,FO2V26"
+    puzzle_four = "XR2H14,AY3V01,BP3V04,CG2V21,EB3H22,FO2V30,GY3H33"
+    puzzle_card = build_puzzle_card_from_definition(puzzle_three)
     g = Game(puzzle_card)
     car = None
     move_dict = {
