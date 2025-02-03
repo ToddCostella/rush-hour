@@ -70,6 +70,7 @@ class Move:
 class Game:
     SIZE: int = 6
     EXIT_SQUARE: int = 18
+    OFF_BOARD: int = 99  # Indicating a position not on the board
 
     def __init__(self, puzzle_card: PuzzleCard) -> None:
         vehicle_placements = []
@@ -82,12 +83,22 @@ class Game:
                 ),
             )
             vehicle_placements.append(placment)
-        # TODO: Check that we have one RED vehicle and that we don't have any vehicle ids that would collide with the hjkl navigation keys
-
+        self.validate_vehicle_placements(vehicle_placements)
         self.vehicle_placements: list[VehiclePlacement] = vehicle_placements
         self.moves = []
         self.is_puzzle_solved = False
         self.console = Console()
+
+    def validate_vehicle_placements(self, vehicle_placements: List[VehiclePlacement]) -> None:
+        # Ensure there's at least one red vehicle
+        red_cars = [v for v in vehicle_placements if v.car.color == Color.RED]
+        if not red_cars:
+            raise ValueError("At least one red vehicle is required.")
+        # Ensure vehicle IDs don't conflict with movement keys
+        restricted_ids = {"h", "j", "k", "l"}
+        for placement in vehicle_placements:
+            if placement.car.id.lower() in restricted_ids:
+                raise ValueError(f"Vehicle ID '{placement.car.id}' conflicts with movement keys.")
 
     def calculate_vehicle_placement_coverage(
         self, exclude_car: Car | None = None
@@ -128,9 +139,7 @@ class Game:
                 orientation=new_placement.orientation,
             )
             new_placement.coverage = my_new_squares
-
             self.moves.append(move)
-            # Update the list of vehicle_placements by removing the old placement and replacing it with the new placement
             self.vehicle_placements.remove(placement)
             self.vehicle_placements.append(new_placement)
         return is_valid_move, new_placement
@@ -138,7 +147,6 @@ class Game:
     def is_valid_move(self, move: Move) -> Tuple[bool, int]:
         is_valid = False
         new_pos = 0
-
         other_vehicle_sqaures = self.calculate_vehicle_placement_coverage_for_others(
             move.car
         )
@@ -182,15 +190,14 @@ class Game:
         is_valid = is_valid and not any(
             item in other_vehicle_sqaures for item in new_coverage
         )
-        # The one exception to all these rules is that Car X (The players RED car) can exit the board from position 18 to solve the puzzle
         if (
             move.car.id == VehicleID("X")
             and move.direction == Direction.RIGHT
-            and tail_pos == 18
+            and tail_pos == self.EXIT_SQUARE
         ):
             self.is_puzzle_solved = True
             is_valid = True
-            new_pos = 99  # Not really valid but we need to some value to indicate off the board
+            new_pos = self.OFF_BOARD
 
         return is_valid, new_pos
 
@@ -242,9 +249,7 @@ class Game:
                     contents = f"[black on {car.color.value}] {car.id} [/]"
                 else:
                     contents = "   "
-                    # contents = f"[white]{square:2} [/]"
 
-                # Add a visual indicator where the exit square is on the board
                 if square == self.EXIT_SQUARE:
                     contents = contents + "[yellow]|[/]"
 
@@ -258,7 +263,6 @@ class Game:
             else f"[black on {selected_car.color.value}] Car:{selected_car.id}[/]"
         )
 
-        # TODO: Add a colspan here and set the moves lavel to be right justified
         status_row = status_row + f"  Moves:{len(self.moves)}"
         grid.add_row(status_row)
         return grid
@@ -283,17 +287,23 @@ def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
         orientation_token = token[3]
         starting_position_token = token[4] + token[5]
 
-        assert len(car_id_token) == 1
-        assert color_token in color_dict.keys()
-        assert lenth_token in ["2", "3"]
-        assert orientation_token in ["H", "V"]
+        try:
+            assert len(car_id_token) == 1
+            assert color_token in color_dict.keys()
+            assert lenth_token in ["2", "3"]
+            assert orientation_token in ["H", "V"]
+        except AssertionError as e:
+            raise ValueError(f"Invalid token format: {token}") from e
+
         car_id = VehicleID(car_id_token)
         car_color = color_dict[color_token]
         car_length = int(lenth_token)
 
         car_orientation = {o.value: o for o in Orientation}[orientation_token]
         starting_position = int(starting_position_token)
-        assert starting_position > 0 and starting_position < 37
+        if not (0 < starting_position < 37):
+            raise ValueError(f"Invalid starting position: {starting_position}")
+
         car = Car(id=car_id, color=car_color, length=car_length)
         puzzle_entry = PuzzleEntry(
             car=car, orientation=car_orientation, starting_position=starting_position
@@ -305,13 +315,7 @@ def build_puzzle_card_from_definition(definition: str) -> PuzzleCard:
 
 
 if __name__ == "__main__":
-    # TODO: These puzzles need to be pulled out into a puzzle deck or puzzle library
     puzzle_one = "XR2H14,AG2H01,BO2V25,CC2H29,PP3V07,TB3V10,OY3V06,RG3H33"
-    puzzle_two = (
-        "XR2H13,AG2V01,BY3H04,CC2V10,DP3V12,EB2V17,FO2H29,GG2H31,MC2V27,NB2H34,OB3H19"
-    )
-    puzzle_three = "XR2H14,AG2H20,BY3V16,CC3V24,EB2H33,FO2V26"
-    puzzle_four = "XR2H14,AY3V01,BP3V04,CG2V21,EB3H22,FO2V30,GY3H33"
     puzzle_card = build_puzzle_card_from_definition(puzzle_one)
     g = Game(puzzle_card)
     car = None

@@ -55,8 +55,9 @@ def red_car_exit_game() -> Game:
 
 
 def green_car_exit_game() -> Game:
+    car_x_entry = PuzzleEntry(car_x, Orientation.HORIZONTAL, 1)
     car_b_entry = PuzzleEntry(car_b, Orientation.HORIZONTAL, 17)
-    puzzle_card = PuzzleCard([car_b_entry])
+    puzzle_card = PuzzleCard([car_x_entry, car_b_entry])
     return Game(puzzle_card=puzzle_card)
 
 
