@@ -8,6 +8,12 @@ Rush Hour is a fun and engaging logic puzzle game where players maneuver their c
 
 I created this project primarily to see what the experience of writing some amount of code in NeoVim. The game itself is mildly interesting, just from a how would I implement an console based game in Python.
 
+## Gameplay Demonstration
+
+Below is an animated demonstration of the game to give you a visual sense of how it works:
+
+![Gameplay Animation](docs/game_one.gif)
+
 ### Features
 
 - **Interactive Game**: Use keyboard commands to move the cars around the grid.
